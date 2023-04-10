@@ -40,7 +40,7 @@ public class GamePanel extends JPanel implements ActionListener {
     // TODO difficulty
     public int difficulty;
 
-    JPanel mapPanel; // TODO convert mapRect to panel?
+//    JPanel mapPanel; // TODO convert mapRect to panel?
     JPanel scoreboardPanel;
     BoardMap boardMap;
     private final Random random = new Random();
@@ -58,7 +58,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private JButton diceButton;
     private int diceNumber;
 
-    private MoveMap moveMap;
+    private MovePanel movePanel;
     private JButton upButton;
     private JButton rightButton;
     private JButton downButton;
@@ -102,6 +102,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         newPlayers();
         newDice();
+        newMovePanel();
         newMoveButtons();
 
     }
@@ -385,7 +386,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     void newDice() {
         // init dice obj
-        int width = (int) ((1.0 - RATIO_OF_MAP_TO_FRAME) / 2.0 * FRAME_WIDTH);
+        int width = boardMap.x;
         int height = FRAME_HEIGHT / 2;
         int x = 0;
         int y = FRAME_HEIGHT / 2;
@@ -399,6 +400,15 @@ public class GamePanel extends JPanel implements ActionListener {
         diceButton.setEnabled(true);
         diceButton.addActionListener(this);
         this.add(diceButton);
+    }
+
+    private void newMovePanel() {
+        int     x = boardMap.x + boardMap.width,
+                y = FRAME_HEIGHT / 2;
+        int     width = FRAME_WIDTH - x,
+                height = FRAME_HEIGHT - y;
+        movePanel = new MovePanel(x, y, width, height);
+        add(movePanel);
     }
 
     private void newMoveButtons() {

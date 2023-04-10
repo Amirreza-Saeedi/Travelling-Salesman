@@ -59,12 +59,6 @@ public class GamePanel extends JPanel implements ActionListener {
     private int diceNumber;
 
     private MovePanel movePanel;
-    private JButton upButton;
-    private JButton rightButton;
-    private JButton downButton;
-    private JButton leftButton;
-
-
 
     enum Turn {
         PLAYER_1,
@@ -412,7 +406,10 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void newMoveButtons() {
-
+        movePanel.upButton.addActionListener(this);
+        movePanel.rightButton.addActionListener(this);
+        movePanel.downButton.addActionListener(this);
+        movePanel.leftButton.addActionListener(this);
     }
 
     private void newQuest() {
@@ -472,5 +469,9 @@ public class GamePanel extends JPanel implements ActionListener {
             repaint();
         }
 
+        else if (e.getSource() == movePanel.upButton) {
+            diceNumber = diceMap.throwDice();
+            repaint();
+        }
     }
 }

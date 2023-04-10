@@ -9,11 +9,16 @@ public class MovePanel extends JPanel {
     private final Rectangle RIGHT = new Rectangle();
     private final Rectangle DOWN = new Rectangle();
     private final Rectangle LEFT = new Rectangle();
+    public JButton upButton;
+    public JButton rightButton;
+    public JButton downButton;
+    public JButton leftButton;
 
     public MovePanel(int x, int y, int width, int height) {
         setBounds(x, y, width, height);
         setBorder(new LineBorder(Color.BLACK, 2));
         setBackground(Color.WHITE);
+        setLayout(null);
 
         // init move box
         moveBox.width = getWidth() / 2;
@@ -27,6 +32,30 @@ public class MovePanel extends JPanel {
         RIGHT.setBounds(UP.x + length, moveBox.y + length, length, length);
         DOWN.setBounds(UP.x, RIGHT.y + length, length, length);
         LEFT.setBounds(moveBox.x, RIGHT.y, length, length);
+
+        newButtons();
+    }
+
+    private void newButtons() {
+        upButton = new JButton("U");
+        upButton.setToolTipText("Up");
+        upButton.setBounds(UP);
+        add(upButton);
+
+        rightButton = new JButton("R");
+        rightButton.setToolTipText("Right");
+        rightButton.setBounds(RIGHT);
+        add(rightButton);
+
+        downButton = new JButton("D");
+        downButton.setToolTipText("Down");
+        downButton.setBounds(DOWN);
+        add(downButton);
+
+        leftButton = new JButton("L");
+        leftButton.setToolTipText("Left");
+        leftButton.setBounds(LEFT);
+        add(leftButton);
     }
 
     public void paintComponent(Graphics g) {

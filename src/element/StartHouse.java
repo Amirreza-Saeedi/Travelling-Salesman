@@ -4,11 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class StartHouse extends Element {
-    public StartHouse(int x, int y, int width, int height, int side) {
+    public StartHouse(int x, int y, int width, int height, int id) {
         super(x, y, width, height);
         this.setTitle("Start");
         this.setColor(new Color(0xFFFFFF));
-        this.setId(side);
+        this.setId(id);
 
         newLabel(getTitle()); // create label
 

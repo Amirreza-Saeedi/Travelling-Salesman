@@ -14,9 +14,9 @@ public abstract class Element extends Rectangle { // Castle, Treasure, Wall, Mar
 
     protected boolean foundByPlayer2;
 
-    protected int _x;
+    public int _x;
 
-    protected int _y;
+    public int _y;
 
     Element(int x, int y, int width, int height) { // main constructor
         super(x, y, width, height); // initialize the rect.

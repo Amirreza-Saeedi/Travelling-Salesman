@@ -21,4 +21,9 @@ public class GameConstants {
     public static final int DOWN = 3;
     public static final int LEFT = 4;
 
+    // players
+    public static final int PLAYER_1 = 0;
+    public static final int PLAYER_2 = 1;
+
+
 }

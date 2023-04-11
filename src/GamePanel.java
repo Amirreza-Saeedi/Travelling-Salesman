@@ -37,6 +37,7 @@ public class GamePanel extends JPanel implements ActionListener {
     // players
     public final int NUMBER_OF_PLAYERS = 2; // TODO add other modes
 
+
     // TODO difficulty
     public int difficulty;
 
@@ -59,11 +60,15 @@ public class GamePanel extends JPanel implements ActionListener {
     private int diceNumber;
 
     private MovePanel movePanel;
+    private Trace[] traces;
+    private int nTrace;
 
-    enum Turn {
+    private int turn;
+
+  /*  enum Turn {
         PLAYER_1,
         PLAYER_2;
-    };
+    };*/
 
 
     enum Status {
@@ -82,7 +87,8 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setBackground(Color.black);
         this.setLayout(null);
 
-        Turn turn = Turn.PLAYER_1;
+        this.turn = GameConstants.PLAYER_1;
+
 
         // game settings
         this.difficulty = GameConstants.MEDIUM;
@@ -97,7 +103,8 @@ public class GamePanel extends JPanel implements ActionListener {
         newPlayers();
         newDice();
         newMovePanel();
-        newMoveButtons();
+        addMoveButtons();
+        newTraces();
 
     }
 
@@ -114,8 +121,17 @@ public class GamePanel extends JPanel implements ActionListener {
     public void draw(Graphics g) {
         boardMap.draw(g);
         drawElements(g); // TODO turn
+        drawDice(g); // TODO define in its own class?
+        drawTrace(g);
         drawPlayers(g);
-        drawDice(g);
+
+        checkPossibleMoves();
+    }
+
+    private void drawTrace(Graphics g) {
+        for (int i = 0; i < nTrace; i++) {
+            traces[i].draw(g);
+        }
     }
 
     private void drawPlayers(Graphics g) {
@@ -187,6 +203,14 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
 
+
+    private void newTraces() {
+        traces = new Trace[6];
+        for (int i = 0; i < traces.length; i++) {
+            traces[i] = new Trace(new Dimension(UNIT_SIZE, UNIT_SIZE));
+        }
+        nTrace = 0;
+    }
 
     public void newMap() { // create a Map obj
         int deltaWidth = FRAME_WIDTH - MAP_WIDTH;
@@ -320,26 +344,17 @@ public class GamePanel extends JPanel implements ActionListener {
             house = random.nextInt(BOARD_UNITS);
 
             switch (side) { // determine the coordinate
-                case GameConstants.UP: // x = 0
-                    if (!isWall(0, house)) {
-                        sw = false;
-                    }
-                    point.x = boardMap.xAxis[0] - UNIT_SIZE;
-                    point.y = boardMap.yAxis[house];
-                    x = -1;
-                    y = house;
-                    break;
-                case GameConstants.RIGHT: // y = max
-                    if (!isWall(house, BOARD_UNITS - 1)) {
+                case GameConstants.UP: // y = 0
+                    if (!isWall(house, 0, true)) {
                         sw = false;
                     }
                     point.x = boardMap.xAxis[house];
-                    point.y = boardMap.yAxis[BOARD_UNITS - 1] + UNIT_SIZE;
+                    point.y = boardMap.yAxis[0] - UNIT_SIZE;
                     x = house;
-                    y = BOARD_UNITS;
+                    y = -1;
                     break;
-                case GameConstants.DOWN: // x = max
-                    if (!isWall(BOARD_UNITS - 1, house)) {
+                case GameConstants.RIGHT: // x = max
+                    if (!isWall(BOARD_UNITS - 1, house, true)) {
                         sw = false;
                     }
                     point.x = boardMap.xAxis[BOARD_UNITS - 1] + UNIT_SIZE;
@@ -347,14 +362,23 @@ public class GamePanel extends JPanel implements ActionListener {
                     x = BOARD_UNITS;
                     y = house;
                     break;
-                case GameConstants.LEFT: // y = 0
-                    if (!isWall(house, 0)) {
+                case GameConstants.DOWN: // y = max
+                    if (!isWall(house, BOARD_UNITS - 1, true)) {
                         sw = false;
                     }
                     point.x = boardMap.xAxis[house];
-                    point.y = boardMap.yAxis[0] - UNIT_SIZE;
+                    point.y = boardMap.yAxis[BOARD_UNITS - 1] + UNIT_SIZE;
                     x = house;
-                    y = -1;
+                    y = BOARD_UNITS;
+                    break;
+                case GameConstants.LEFT: // x = 0
+                    if (!isWall(0, house, true)) {
+                        sw = false;
+                    }
+                    point.x = boardMap.xAxis[0] - UNIT_SIZE;
+                    point.y = boardMap.yAxis[house];
+                    x = -1;
+                    y = house;
                     break;
             }
 
@@ -405,11 +429,32 @@ public class GamePanel extends JPanel implements ActionListener {
         add(movePanel);
     }
 
-    private void newMoveButtons() {
+    private void addMoveButtons() {
         movePanel.upButton.addActionListener(this);
         movePanel.rightButton.addActionListener(this);
         movePanel.downButton.addActionListener(this);
         movePanel.leftButton.addActionListener(this);
+
+       /* movePanel.upButton.setEnabled(false);
+        movePanel.rightButton.setEnabled(false);
+        movePanel.downButton.setEnabled(false);
+        movePanel.leftButton.setEnabled(false);*/
+
+        /*switch (startHouse.getId()) {
+            case GameConstants.UP:
+                movePanel.downButton.setEnabled(true);
+                break;
+            case GameConstants.RIGHT:
+                movePanel.leftButton.setEnabled(true);
+                break;
+            case GameConstants.DOWN:
+                movePanel.upButton.setEnabled(true);
+                break;
+            case GameConstants.LEFT:
+                movePanel.rightButton.setEnabled(true);
+                break;
+
+        }*/
     }
 
     private void newQuest() {
@@ -418,8 +463,16 @@ public class GamePanel extends JPanel implements ActionListener {
 
 
 
-    private boolean isWall(int x, int y) {
-        return (boardMap.board[x][y] == GameConstants.WALL);
+    private boolean isWall(int x, int y, boolean optimized) {
+        if (optimized) {
+            return (boardMap.board[x][y] == GameConstants.WALL);
+        } else {
+            for (Wall wall : walls) {
+                if (x == wall._x && y == wall._y)
+                    return true;
+            }
+            return false;
+        }
     }
 
 
@@ -460,18 +513,155 @@ public class GamePanel extends JPanel implements ActionListener {
         p.y = y;
     }
 
+    private void checkPossibleMoves() {
+        int     x = players[turn]._x,
+                y = players[turn]._y;
 
+        // start houses:
+        if (x == -1) { // only right
+            movePanel.upButton.setEnabled(false);
+            movePanel.rightButton.setEnabled(true);
+            movePanel.downButton.setEnabled(false);
+            movePanel.leftButton.setEnabled(false);
+
+        } else if (x == BOARD_UNITS) { // only left
+            movePanel.upButton.setEnabled(false);
+            movePanel.rightButton.setEnabled(false);
+            movePanel.downButton.setEnabled(false);
+            movePanel.leftButton.setEnabled(true);
+
+        } else if (y == -1) { // only down
+            movePanel.upButton.setEnabled(false);
+            movePanel.rightButton.setEnabled(false);
+            movePanel.downButton.setEnabled(true);
+            movePanel.leftButton.setEnabled(false);
+
+        } else if (y == BOARD_UNITS) { // only up
+            movePanel.upButton.setEnabled(true);
+            movePanel.rightButton.setEnabled(false);
+            movePanel.downButton.setEnabled(false);
+            movePanel.leftButton.setEnabled(false);
+
+        } else { // inside the board
+
+            if (y == 0 || isWall(x, y - 1, false) || isTrace(x, y - 1)) { // up dir
+                movePanel.upButton.setEnabled(false);
+            } else {
+                movePanel.upButton.setEnabled(true);
+            }
+
+            if (x == BOARD_UNITS - 1 || isWall(x + 1, y, false) || isTrace(x + 1, y)) { // right dir
+                movePanel.rightButton.setEnabled(false);
+            } else {
+                movePanel.rightButton.setEnabled(true);
+            }
+
+            if (y == BOARD_UNITS - 1 || isWall(x, y + 1, false) || isTrace(x, y + 1)) { // down dir
+                movePanel.downButton.setEnabled(false);
+            } else {
+                movePanel.downButton.setEnabled(true);
+            }
+
+            if (x == 0 || isWall(x - 1, y, false) || isTrace(x - 1, y)) { // left dir
+                movePanel.leftButton.setEnabled(false);
+            } else {
+                movePanel.leftButton.setEnabled(true);
+            }
+
+            if (diceNumber != 0) // if player traps himself
+                checkMovePenalty();
+        }
+    }
+
+    void checkMovePenalty() { // todo if all of move buttons were disabled
+        if (!movePanel.upButton.isEnabled() && !movePanel.rightButton.isEnabled() &&
+                !movePanel.downButton.isEnabled() && !movePanel.leftButton.isEnabled()) {
+/*
+*
+* */
+            System.err.println("DON'T TRAP YOURSELF!");
+            nextPlayer();
+            repaint();
+        }
+    }
+
+    void checkHouse() { // todo complete
+
+    }
+
+    private boolean isTrace(int x, int y) {
+        for (int i = 0; i < nTrace; i++) {
+            if (traces[i]._x == x && traces[i]._y == y)
+                return true;
+        }
+        return false;
+    }
+
+    void nextPlayer() { // make things ready for next player
+        turn = (turn + 1) % NUMBER_OF_PLAYERS;
+        diceNumber = 0;
+        nTrace = 0;
+        diceButton.setEnabled(true);
+
+    }
+    
+    void moveListener() { // things to do after each move
+        diceNumber--;
+        nTrace++;
+        if (diceNumber == 0)
+            nextPlayer();
+        
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        // simplify variables:
+        Player player = players[turn];
+
+        // dice:
         if (e.getSource() == diceButton) {
             diceNumber = diceMap.throwDice();
+            diceButton.setEnabled(false);
             repaint();
         }
 
-        else if (e.getSource() == movePanel.upButton) {
-            diceNumber = diceMap.throwDice();
+        // moves:
+        else if (e.getSource() == movePanel.upButton && diceNumber != 0) { // go up
+            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+            player.y -= boardMap.UNIT_SIZE;
+            player._y--;
+
+            moveListener();
+            repaint();
+
+        } else if (e.getSource() == movePanel.rightButton && diceNumber != 0) { // go right
+            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+            player.x += boardMap.UNIT_SIZE;
+            player._x++;
+
+            moveListener();
+            repaint();
+
+        } else if (e.getSource() == movePanel.downButton && diceNumber != 0) { // go down
+            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+            player.y += boardMap.UNIT_SIZE;
+            player._y++;
+
+            moveListener();
+            repaint();
+
+        } else if (e.getSource() == movePanel.leftButton && diceNumber != 0) { // go left
+            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+            player.x -= boardMap.UNIT_SIZE;
+            player._x--;
+
+            moveListener();
             repaint();
         }
+
     }
 }

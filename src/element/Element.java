@@ -110,4 +110,9 @@ public abstract class Element extends Rectangle { // Castle, Treasure, Wall, Mar
         this.setLabel(label);
 
     }
+
+    @Override
+    public String toString() {
+        return title + id;
+    }
 }

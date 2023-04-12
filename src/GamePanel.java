@@ -126,6 +126,8 @@ public class GamePanel extends JPanel implements ActionListener {
         drawPlayers(g);
 
         checkPossibleMoves();
+
+
     }
 
     private void drawTrace(Graphics g) {
@@ -585,8 +587,68 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
-    void checkHouse() { // todo complete
+    void checkHouse() { // applies appropriate behavior
+        Player curPlayer = players[turn];
 
+        for (int i = turn, j = 0; j < NUMBER_OF_PLAYERS - 1; ++i, ++j) { // first check for fight
+            int nxtTurn = (i + 1) % NUMBER_OF_PLAYERS;
+            if (curPlayer._x == players[nxtTurn]._x && curPlayer._y == players[nxtTurn]._y)
+                applyFight(players[nxtTurn]);
+        }
+
+        switch (boardMap.board[curPlayer._x][curPlayer._y]) { // then for houses
+            case GameConstants.LOOT:
+                applyLoot();
+                break;
+            case GameConstants.TRAP:
+                applyTrap();
+                break;
+            case GameConstants.TREASURE:
+                applyTreasure();
+                break;
+            case GameConstants.CASTLE:
+                applyCastle();
+                break;
+            case GameConstants.MARKET:
+                applyMarket();
+                break;
+        }
+
+
+
+    }
+
+    void applyFight(Player opponent) {
+        System.out.println("GamePanel.applyFight");
+        System.out.println("opponent = " + opponent);
+        players[turn].fight(opponent, startHouse); // todo random start house
+        System.out.println();
+
+    }
+
+    void applyTreasure() {
+        System.out.println("GamePanel.applyTreasure");
+        System.out.println();
+    }
+
+    void applyTrap() {
+        System.out.println("GamePanel.applyTrap");
+        System.out.println();
+    }
+
+    void applyCastle() {
+        System.out.println("GamePanel.applyCastle");
+        System.out.println();
+    }
+
+    void applyMarket() {
+        System.out.println("GamePanel.applyMarket");
+        System.out.println();
+    }
+
+    void applyLoot() {
+        System.out.println("GamePanel.applyLoot");
+        System.out.println();
     }
 
     private boolean isTrace(int x, int y) {
@@ -602,15 +664,25 @@ public class GamePanel extends JPanel implements ActionListener {
         diceNumber = 0;
         nTrace = 0;
         diceButton.setEnabled(true);
+        System.out.println("players = " + players[turn]);
+        System.out.println();
 
     }
+
+    void checkGameStatus() { // todo check if current player has won
+
+
+    }
+
+
     
     void moveListener() { // things to do after each move
         diceNumber--;
         nTrace++;
-        if (diceNumber == 0)
+        if (diceNumber == 0) { // trigger at the end of the move
+            checkHouse();
             nextPlayer();
-        
+        }
     }
 
     @Override

@@ -639,6 +639,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     void applyTrap() {
         System.out.println("main.GamePanel.applyTrap");
+
         System.out.println();
     }
 
@@ -656,24 +657,20 @@ public class GamePanel extends JPanel implements ActionListener {
         System.out.println("main.GamePanel.applyLoot");
         Player player = players[turn];
 
-        boolean sw = true;
-        int i = 0;
-        for (; sw && i < loots.length; i++) {
-            if (player._x == loots[i]._x && player._y == loots[i]._y)
-                sw = false;
-        }
+        Loot loot = (Loot) findElement(new Loot(), player._x, player._y);
 
-        if (!sw) {
-            Loot loot = loots[i];
+        if (loot != null) {
             loot.setVisible(true);
             repaint();
             loot.setLooted(true); // todo why doesn't work?
             player.applyLoot(loot);
-            player.nLoots ++; // todo private?
+            player.nLoots++; // todo private?
             JOptionPane.showMessageDialog(this,
                     String.format("Loot founded! %d coins gained.", loot.getValue()),
                     "Loot", JOptionPane.INFORMATION_MESSAGE);
             loot.setVisible(false);
+        } else {
+            System.err.println("GamePanel.applyLoot\nnull");
         }
     }
 
@@ -698,6 +695,29 @@ public class GamePanel extends JPanel implements ActionListener {
     void checkGameStatus() { // todo check if current player has won
 
 
+    }
+
+    private Element findElement(Element element, int x, int y) {
+        Element[] elements;
+        if (element instanceof Loot) {
+            elements = loots;
+        } else if (element instanceof Trap) {
+            elements = traps;
+        } else if (element instanceof Treasure) {
+            elements = treasures;
+        }  // todo add markets
+        else {
+            System.err.println("GamePanel.findElement\nInvalid input");
+            return null;
+        }
+
+        for (Element value : elements) { // looking for...
+            if (x == value._x && y == value._y)
+                return value;
+        }
+
+        System.err.println("GamePanel.findElement\nNot founded");
+        return null;
     }
 
 

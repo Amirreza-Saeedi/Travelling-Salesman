@@ -61,33 +61,33 @@ public class Player extends Element { // todo extend or not?
 
     public void fight(Player opponent, StartHouse startHouse) {
         System.out.println("Player.fight");
-        Player winner, looser;
+        Player winner, loser;
         if (this.power >= opponent.power) { // declare winner
             winner = this;
-            looser = opponent;
+            loser = opponent;
         } else {
             winner = opponent;
-            looser = this;
+            loser = this;
         }
         System.out.println("winner = " + winner);
-        System.out.println("looser = " + looser);
+        System.out.println("loser = " + loser);
 
         // coin changes
-        int coin = (int) (((double) winner.power - looser.power) / (winner.power + looser.power) * looser.coin);
+        int coin = (int) (((double) winner.power - loser.power) / (winner.power + loser.power) * loser.coin);
         System.out.println("coin = " + coin);
         winner.coin += coin;
-        looser.coin -= coin;
+        loser.coin -= coin;
 
         // power changes
-        winner.power -= looser.power;
-        looser.power = 0;
+        winner.power -= loser.power;
+        loser.power = 0;
         System.out.println("winner.power = " + winner.power);
 
-        // revive the looser
-        looser.x = startHouse.x;
-        looser.y = startHouse.y;
-        looser._x = startHouse._x;
-        looser._y = startHouse._y;
+        // revive the loser
+        loser.x = startHouse.x;
+        loser.y = startHouse.y;
+        loser._x = startHouse._x;
+        loser._y = startHouse._y;
     }
     
     public void gainCoin(int amount) {
@@ -105,16 +105,16 @@ public class Player extends Element { // todo extend or not?
         } 
     }
 
-    public void looseCoin(int amount) {
+    public void loseCoin(int amount) {
         if (amount < 0) {
             coin += amount;
-            System.out.println("Player.looseCoin");
+            System.out.println("Player.loseCoin");
             System.out.println("title = " + title);
             System.out.println("amount = " + amount);
             System.out.println("coin = " + coin);
             System.out.println();
         } else {
-            System.err.println("Player.looseCoin");
+            System.err.println("Player.loseCoin");
             System.out.println("amount = " + amount);
             System.out.println();
         }
@@ -123,28 +123,28 @@ public class Player extends Element { // todo extend or not?
     public void gainPower(int amount) {
         if (amount > 0) {
             power += amount;
-            System.out.println("Player.loosePower");
+            System.out.println("Player.losePower");
             System.out.println("title = " + title);
             System.out.println("amount = " + amount);
             System.out.println("power = " + power);
             System.out.println();
         } else {
-            System.err.println("Player.loosePower");
+            System.err.println("Player.losePower");
             System.out.println("amount = " + amount);
             System.out.println();
         }
     }
 
-    public void loosePower(int amount) {
+    public void losePower(int amount) {
         if (amount < 0) {
             power += amount;
-            System.out.println("Player.loosePower");
+            System.out.println("Player.losePower");
             System.out.println("title = " + title);
             System.out.println("amount = " + amount);
             System.out.println("power = " + power);
             System.out.println();
         } else {
-            System.err.println("Player.loosePower");
+            System.err.println("Player.losePower");
             System.out.println("amount = " + amount);
             System.out.println();
         }
@@ -161,5 +161,11 @@ public class Player extends Element { // todo extend or not?
     public void applyLoot(Loot loot) {
         System.out.println("Player.applyLoot");
         gainCoin(loot.value);
+    }
+
+    public void applyTrap(Trap trap) {
+        System.out.println("Player.applyTrap");
+        loseCoin(trap.financialDamage);
+        losePower(trap.physicalDamage);
     }
 }

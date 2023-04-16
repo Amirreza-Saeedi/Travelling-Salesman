@@ -1,6 +1,8 @@
 package element;
 
 import java.awt.*;
+
+import consts.GameConstants;
 import main.*;
 
 
@@ -31,6 +33,8 @@ public class Player extends Element { // todo extend or not?
         this.power = INITIAL_POWER;
         this.coin = INITIAL_CASH;
         this.lootedTreasures = new int[GamePanel.NUMBER_OF_TREASURES];
+        this.locatedTreasures = new int[GamePanel.NUMBER_OF_TREASURES];
+        this.locatedTraps = new int[GamePanel.NUMBER_OF_TRAPS];
 
         setVisible(true);
     }
@@ -84,5 +88,78 @@ public class Player extends Element { // todo extend or not?
         looser.y = startHouse.y;
         looser._x = startHouse._x;
         looser._y = startHouse._y;
+    }
+    
+    public void gainCoin(int amount) {
+        if (amount > 0) {
+            coin += amount;
+            System.out.println("Player.gainCoin");
+            System.out.println("title = " + title);
+            System.out.println("amount = " + amount);
+            System.out.println("coin = " + coin);
+            System.out.println();
+        } else {
+            System.err.println("Player.gainCoin");
+            System.out.println("amount = " + amount);
+            System.out.println();
+        } 
+    }
+
+    public void looseCoin(int amount) {
+        if (amount < 0) {
+            coin += amount;
+            System.out.println("Player.looseCoin");
+            System.out.println("title = " + title);
+            System.out.println("amount = " + amount);
+            System.out.println("coin = " + coin);
+            System.out.println();
+        } else {
+            System.err.println("Player.looseCoin");
+            System.out.println("amount = " + amount);
+            System.out.println();
+        }
+    }
+
+    public void gainPower(int amount) {
+        if (amount > 0) {
+            power += amount;
+            System.out.println("Player.loosePower");
+            System.out.println("title = " + title);
+            System.out.println("amount = " + amount);
+            System.out.println("power = " + power);
+            System.out.println();
+        } else {
+            System.err.println("Player.loosePower");
+            System.out.println("amount = " + amount);
+            System.out.println();
+        }
+    }
+
+    public void loosePower(int amount) {
+        if (amount < 0) {
+            power += amount;
+            System.out.println("Player.loosePower");
+            System.out.println("title = " + title);
+            System.out.println("amount = " + amount);
+            System.out.println("power = " + power);
+            System.out.println();
+        } else {
+            System.err.println("Player.loosePower");
+            System.out.println("amount = " + amount);
+            System.out.println();
+        }
+    }
+
+    public int getPower() {
+        return power;
+    }
+
+    public int getCoin() {
+        return coin;
+    }
+
+    public void applyLoot(Loot loot) {
+        System.out.println("Player.applyLoot");
+        gainCoin(loot.value);
     }
 }

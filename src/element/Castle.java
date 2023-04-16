@@ -7,7 +7,8 @@ public class Castle extends Element {
         super(x, y, width, height);
         this.setTitle("Castle");
         this.setColor(new Color(0xFFFF02));
-
         newLabel(getTitle()); // create label
+
+        this.setVisible(true);
     }
 }

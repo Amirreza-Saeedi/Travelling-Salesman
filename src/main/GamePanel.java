@@ -1,3 +1,6 @@
+package main;
+
+import consts.GameConstants;
 import element.*;
 
 import javax.swing.*;
@@ -22,17 +25,17 @@ public class GamePanel extends JPanel implements ActionListener {
 
     // elements (amounts, units ...)
     static final int BOARD_UNITS = 10;
-    private final int NUMBER_OF_UNITS = BOARD_UNITS * BOARD_UNITS;
+    private static final int NUMBER_OF_UNITS = BOARD_UNITS * BOARD_UNITS;
     private static final double RATIO_OF_MARKETS_TO_UNITS = 5.0 / (10 * 10);
-    public final int NUMBER_OF_MARKETS = (int) (NUMBER_OF_UNITS * RATIO_OF_MARKETS_TO_UNITS);
+    public static final int NUMBER_OF_MARKETS = (int) (NUMBER_OF_UNITS * RATIO_OF_MARKETS_TO_UNITS);
     private static final double RATIO_OF_LOOTS_TO_UNITS = 13.0 / (10 * 10);
-    public final int NUMBER_OF_LOOTS = (int) (NUMBER_OF_UNITS * RATIO_OF_LOOTS_TO_UNITS);
-    public final int NUMBER_OF_TREASURES = 8; // TODO expand treasures
-    public final int NUMBER_OF_CASTLES = 1; // TODO add other modes
+    public static final int NUMBER_OF_LOOTS = (int) (NUMBER_OF_UNITS * RATIO_OF_LOOTS_TO_UNITS);
+    public static final int NUMBER_OF_TREASURES = 8; // TODO expand treasures
+    public static final int NUMBER_OF_CASTLES = 1; // TODO add other modes
     private static final double RATIO_OF_WALLS_TO_UNITS = 5.0 / (10 * 10);
-    public final int NUMBER_OF_WALLS = (int) (NUMBER_OF_UNITS * RATIO_OF_WALLS_TO_UNITS);
+    public static final int NUMBER_OF_WALLS = (int) (NUMBER_OF_UNITS * RATIO_OF_WALLS_TO_UNITS);
     private static final double RATIO_OF_TRAPS_TO_UNITS = 5.0 / (10 * 10); // TODO add difficulty condition
-    public final int NUMBER_OF_TRAPS = (int) (NUMBER_OF_UNITS * RATIO_OF_TRAPS_TO_UNITS);
+    public static final int NUMBER_OF_TRAPS = (int) (NUMBER_OF_UNITS * RATIO_OF_TRAPS_TO_UNITS);
 
     // players
     public final int NUMBER_OF_PLAYERS = 2; // TODO add other modes
@@ -245,15 +248,12 @@ public class GamePanel extends JPanel implements ActionListener {
         int j = random.nextInt(4); // determine which area to start
         Point point = new Point();
 
-        for (int i = 0; i < treasures.length; i++) { // divide board into 4 areas for just initialization
-            justRandomization(j, point);
+        for (int i = 0; i < treasures.length; i++) {
+            justRandomization(j, point); // determine coordinate
 
             treasures[i] = new Treasure(boardMap.xAxis[point.x], boardMap.yAxis[point.y], UNIT_SIZE, UNIT_SIZE,
-                    Treasure.namesList[i]); // set the names from the list
-            treasures[i].setId(i);
-            treasures[i].setValue(Treasure.valueList[i]);
-            treasures[i].set_x(point.x);
-            treasures[i].set_y(point.y);
+                    i, point.x, point.y, Treasure.namesList[i], Treasure.valueList[i]); // set specific name and value
+
             boardMap.board[point.x][point.y] = GameConstants.TREASURE; // add house
             this.add(treasures[i].getLabel()); // add label
             j++;
@@ -266,12 +266,12 @@ public class GamePanel extends JPanel implements ActionListener {
         int j = random.nextInt(4); // determine which area to start
         Point point = new Point();
 
-        for (int i = 0; i < markets.length; i++) { // divide board into 4 areas for just initialization
-            justRandomization(j, point);
+        for (int i = 0; i < markets.length; i++) {
+            justRandomization(j, point); // determine coordinate
 
-            markets[i] = new Market(boardMap.xAxis[point.x], boardMap.yAxis[point.y], UNIT_SIZE, UNIT_SIZE);
-            markets[i].set_x(point.x);
-            markets[i].set_y(point.y);
+            markets[i] = new Market(boardMap.xAxis[point.x], boardMap.yAxis[point.y], UNIT_SIZE, UNIT_SIZE,
+                                    i, point.x, point.y);
+
             boardMap.board[point.x][point.y] = GameConstants.MARKET; // add house
             this.add(markets[i].getLabel()); // add label
             j++;
@@ -280,7 +280,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void newLoots() {
         loots = new Loot[NUMBER_OF_LOOTS];
-        int x = 0,
+        int     x = 0,
                 y = 0;
 
         for (int i = 0; i < loots.length; i++) {
@@ -289,9 +289,9 @@ public class GamePanel extends JPanel implements ActionListener {
                 y = random.nextInt(BOARD_UNITS);
             } while (boardMap.board[x][y] != GameConstants.EMPTY);
 
-            loots[i] = new Loot(boardMap.xAxis[x], boardMap.yAxis[y], UNIT_SIZE, UNIT_SIZE);
-            loots[i].set_x(x);
-            loots[i].set_y(y);
+            loots[i] = new Loot(boardMap.xAxis[x], boardMap.yAxis[y], UNIT_SIZE, UNIT_SIZE,
+                                i, x, y);
+
             boardMap.board[x][y] = GameConstants.LOOT; // add house
             this.add(loots[i].getLabel()); // add label
         }
@@ -308,9 +308,9 @@ public class GamePanel extends JPanel implements ActionListener {
                 y = random.nextInt(BOARD_UNITS);
             } while (boardMap.board[x][y] != GameConstants.EMPTY);
 
-            traps[i] = new Trap(boardMap.xAxis[x], boardMap.yAxis[y], UNIT_SIZE, UNIT_SIZE);
-            traps[i].set_x(x);
-            traps[i].set_y(y);
+            traps[i] = new Trap(boardMap.xAxis[x], boardMap.yAxis[y], UNIT_SIZE, UNIT_SIZE,
+                                i, x, y);
+
             boardMap.board[x][y] = GameConstants.TRAP; // add house
             this.add(traps[i].getLabel()); // add label
         }
@@ -318,7 +318,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void newWalls() {
         walls = new Wall[NUMBER_OF_WALLS];
-        int x = 0,
+        int     x = 0,
                 y = 0;
 
         for (int i = 0; i < walls.length; i++) {
@@ -327,9 +327,9 @@ public class GamePanel extends JPanel implements ActionListener {
                 y = random.nextInt(BOARD_UNITS);
             } while (boardMap.board[x][y] != GameConstants.EMPTY);
 
-            walls[i] = new Wall(boardMap.xAxis[x], boardMap.yAxis[y], UNIT_SIZE, UNIT_SIZE);
-            walls[i].set_x(x);
-            walls[i].set_y(y);
+            walls[i] = new Wall(boardMap.xAxis[x], boardMap.yAxis[y], UNIT_SIZE, UNIT_SIZE,
+                                i, x, y);
+
             boardMap.board[x][y] = GameConstants.WALL; // add house
             this.add(walls[i].getLabel()); // add label
         }
@@ -386,9 +386,9 @@ public class GamePanel extends JPanel implements ActionListener {
 
         }
 
-        startHouse = new StartHouse(point.x, point.y, UNIT_SIZE, UNIT_SIZE, side);
-        startHouse.set_x(x);
-        startHouse.set_y(y);
+        startHouse = new StartHouse(point.x, point.y, UNIT_SIZE, UNIT_SIZE,
+                                    side, x, y);
+
         this.add(startHouse.getLabel());
     }
 
@@ -396,11 +396,9 @@ public class GamePanel extends JPanel implements ActionListener {
         players = new Player[NUMBER_OF_PLAYERS];
 
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
-            String title = String.format("Player %d", i);
+            String title = "Player " + (i + 1);
             players[i] = new Player(startHouse.x, startHouse.y, startHouse.width, startHouse.height,
-                    title, i);
-            players[i].set_x(startHouse.get_x());
-            players[i].set_y(startHouse.get_y());
+                    i, startHouse._x, startHouse._y, title);
         }
     }
 
@@ -443,16 +441,16 @@ public class GamePanel extends JPanel implements ActionListener {
         movePanel.leftButton.setEnabled(false);*/
 
         /*switch (startHouse.getId()) {
-            case GameConstants.UP:
+            case consts.GameConstants.UP:
                 movePanel.downButton.setEnabled(true);
                 break;
-            case GameConstants.RIGHT:
+            case consts.GameConstants.RIGHT:
                 movePanel.leftButton.setEnabled(true);
                 break;
-            case GameConstants.DOWN:
+            case consts.GameConstants.DOWN:
                 movePanel.upButton.setEnabled(true);
                 break;
-            case GameConstants.LEFT:
+            case consts.GameConstants.LEFT:
                 movePanel.rightButton.setEnabled(true);
                 break;
 
@@ -619,7 +617,7 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     void applyFight(Player opponent) {
-        System.out.println("GamePanel.applyFight");
+        System.out.println("main.GamePanel.applyFight");
         System.out.println("opponent = " + opponent);
         players[turn].fight(opponent, startHouse); // todo random start house
         System.out.println();
@@ -627,27 +625,27 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     void applyTreasure() {
-        System.out.println("GamePanel.applyTreasure");
+        System.out.println("main.GamePanel.applyTreasure");
         System.out.println();
     }
 
     void applyTrap() {
-        System.out.println("GamePanel.applyTrap");
+        System.out.println("main.GamePanel.applyTrap");
         System.out.println();
     }
 
     void applyCastle() {
-        System.out.println("GamePanel.applyCastle");
+        System.out.println("main.GamePanel.applyCastle");
         System.out.println();
     }
 
     void applyMarket() {
-        System.out.println("GamePanel.applyMarket");
+        System.out.println("main.GamePanel.applyMarket");
         System.out.println();
     }
 
     void applyLoot() {
-        System.out.println("GamePanel.applyLoot");
+        System.out.println("main.GamePanel.applyLoot");
         System.out.println();
     }
 

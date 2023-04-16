@@ -1,28 +1,38 @@
 package element;
 
 import java.awt.*;
+import main.*;
 
-public class Player extends Element {
+
+public class Player extends Element { // todo extend or not?
     private static final int INITIAL_POWER = 50;
     private static final int INITIAL_CASH = 100;
-    private int[] lootedTreasures; // saves treasure ID
-
+    private int[] lootedTreasures; // saves looted treasures ID
+    private int[] locatedTreasures; // saves located treasures ID
+    private int[] lootedLoots; // saves looted loots ID
+    private int[] locatedTraps; // saves located traps ID
     private int power;
     private int coin;
+    public int nTreasures;
+    public int nLocatedTreasure;
+    public int nTraps;
+    public int nLoots;
 
-    private static Color[] colors = {
+    private static final Color[] colors = {
             new Color(0xE00000),
             new Color(0xFF0041D3, true)
     };
 
-    public Player(int x, int y, int width, int height, String title, int id) {
-        super(x, y, width, height);
+    public Player(int x, int y, int width, int height, int id, int _x, int _y, String title) {
+        super(x, y, width, height, id, _x, _y, title);
         this.setColor(colors[id]);
-        this.setTitle(title);
         this.newLabel(getTitle()); // create label
 
         this.power = INITIAL_POWER;
         this.coin = INITIAL_CASH;
+        this.lootedTreasures = new int[GamePanel.NUMBER_OF_TREASURES];
+
+        setVisible(true);
     }
 
     public void draw(Graphics g) { // draws a bordered-filled circle & it's image within

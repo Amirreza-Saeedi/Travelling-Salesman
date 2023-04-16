@@ -284,13 +284,15 @@ public class GamePanel extends JPanel implements ActionListener {
                 y = 0;
 
         for (int i = 0; i < loots.length; i++) {
-            do {
+            do { // todo add a appropriate func
                 x = random.nextInt(BOARD_UNITS);
                 y = random.nextInt(BOARD_UNITS);
             } while (boardMap.board[x][y] != GameConstants.EMPTY);
 
+            int value = Loot.createValue();
+
             loots[i] = new Loot(boardMap.xAxis[x], boardMap.yAxis[y], UNIT_SIZE, UNIT_SIZE,
-                                i, x, y);
+                                i, x, y, value);
 
             boardMap.board[x][y] = GameConstants.LOOT; // add house
             this.add(loots[i].getLabel()); // add label

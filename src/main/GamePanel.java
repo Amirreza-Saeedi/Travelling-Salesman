@@ -313,8 +313,11 @@ public class GamePanel extends JPanel implements ActionListener {
                 y = random.nextInt(BOARD_UNITS);
             } while (boardMap.board[x][y] != GameConstants.EMPTY);
 
+            int physicalDamage = Trap.createPhysicalDamage();
+            int financialDamage = Trap.createFinancialDamage();
             traps[i] = new Trap(boardMap.xAxis[x], boardMap.yAxis[y], UNIT_SIZE, UNIT_SIZE,
-                                i, x, y);
+                                i, x, y, physicalDamage, financialDamage);
+            traps[i].classify();
 
             boardMap.board[x][y] = GameConstants.TRAP; // add house
             this.add(traps[i].getLabel()); // add label

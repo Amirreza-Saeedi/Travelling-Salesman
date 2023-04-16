@@ -4,10 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Treasure extends Element implements Lootable { // contains 8 different valuable treasures
-    private boolean lootedByPlayer1;
-
-    private boolean lootedByPlayer2;
-
+    private boolean looted;
     private int value;
 
     public static final String[] namesList = {
@@ -46,7 +43,7 @@ public class Treasure extends Element implements Lootable { // contains 8 differ
     }
 
     @Override
-    public void setLooted() {
-
+    public void setLooted(boolean b) {
+        looted = b;
     }
 }

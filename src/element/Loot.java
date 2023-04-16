@@ -3,7 +3,7 @@ package element;
 import javax.swing.*;
 import java.awt.*;
 
-public class Loot extends Element {
+public class Loot extends Element implements Lootable{
     private boolean looted;
 
     public Loot(int x, int y, int width, int height, int id, int _x, int _y, int value) {
@@ -19,12 +19,13 @@ public class Loot extends Element {
     }
 
 
+    @Override
     public boolean isLooted() {
         return looted;
     }
 
     @Override
-    public void setLabel(JLabel label) {
-        super.setLabel(label);
+    public void setLooted(boolean b) {
+        looted = b;
     }
 }

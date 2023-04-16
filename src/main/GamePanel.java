@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Time;
 import java.util.Random;
 
 import static java.lang.Math.ceil;
@@ -296,6 +297,8 @@ public class GamePanel extends JPanel implements ActionListener {
 
             boardMap.board[x][y] = GameConstants.LOOT; // add house
             this.add(loots[i].getLabel()); // add label
+            Loot loot = loots[i];
+            loot.setVisible(true);
         }
     }
 
@@ -515,7 +518,7 @@ public class GamePanel extends JPanel implements ActionListener {
         p.y = y;
     }
 
-    private void checkPossibleMoves() {
+    private void checkPossibleMoves() { // set buttons status & may perform penalty
         int     x = players[turn]._x,
                 y = players[turn]._y;
 
@@ -648,7 +651,27 @@ public class GamePanel extends JPanel implements ActionListener {
 
     void applyLoot() {
         System.out.println("main.GamePanel.applyLoot");
-        System.out.println();
+        Player player = players[turn];
+
+        boolean sw = true;
+        int i = 0;
+        for (; sw && i < loots.length; i++) {
+            if (player._x == loots[i]._x && player._y == loots[i]._y)
+                sw = false;
+        }
+
+        if (!sw) {
+            Loot loot = loots[i];
+            loot.setVisible(true);
+            repaint();
+            loot.setLooted(true); // todo why doesn't work?
+            player.applyLoot(loot);
+            player.nLoots ++; // todo private?
+            JOptionPane.showMessageDialog(this,
+                    String.format("Loot founded! %d coins gained.", loot.getValue()),
+                    "Loot", JOptionPane.INFORMATION_MESSAGE);
+            loot.setVisible(false);
+        }
     }
 
     private boolean isTrace(int x, int y) {
@@ -704,6 +727,7 @@ public class GamePanel extends JPanel implements ActionListener {
             player.y -= boardMap.UNIT_SIZE;
             player._y--;
 
+            repaint();
             moveListener();
             repaint();
 
@@ -713,6 +737,7 @@ public class GamePanel extends JPanel implements ActionListener {
             player.x += boardMap.UNIT_SIZE;
             player._x++;
 
+            repaint();
             moveListener();
             repaint();
 
@@ -722,6 +747,7 @@ public class GamePanel extends JPanel implements ActionListener {
             player.y += boardMap.UNIT_SIZE;
             player._y++;
 
+            repaint();
             moveListener();
             repaint();
 
@@ -731,6 +757,7 @@ public class GamePanel extends JPanel implements ActionListener {
             player.x -= boardMap.UNIT_SIZE;
             player._x--;
 
+            repaint();
             moveListener();
             repaint();
         }

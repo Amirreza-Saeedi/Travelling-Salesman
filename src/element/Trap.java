@@ -8,15 +8,22 @@ public class Trap extends Element {
     protected int financialDamage;
     private static final int[] physicalDamages = {5, 10};
     private static final int[] financialDamages = {25, 50};
-    public Trap(int x, int y, int width, int height, int id, int _x, int _y, int physicalDamage, int financialDamage) {
+    public Trap(int x, int y, int width, int height, int id, int _x, int _y,
+                int physicalDamage, int financialDamage) { // const 1
         super(x, y, width, height, id, _x, _y, "Trap");
+        this.physicalDamage = physicalDamage;
+        this.financialDamage = financialDamage;
         this.setColor(new Color(0xFF0202));
         newLabel(getTitle()); // create label
 
         setVisible(false);
     }
-      public Trap(int x, int y, int width, int height, int id, int _x, int _y) {
+    public Trap(int x, int y, int width, int height, int id, int _x, int _y) { // const 2
         this(x, y, width, height, id, _x, _y, 0, 0);
+    }
+
+    public Trap() { // void const
+
     }
 
     public static int createPhysicalDamage() {

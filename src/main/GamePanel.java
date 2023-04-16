@@ -639,8 +639,24 @@ public class GamePanel extends JPanel implements ActionListener {
 
     void applyTrap() {
         System.out.println("main.GamePanel.applyTrap");
+        Player player = players[turn];
 
-        System.out.println();
+        Trap trap = (Trap) findElement(new Trap(), player._x, player._y);
+
+        if (trap != null) {
+            trap.setVisible(true);
+            repaint();
+            player.applyTrap(trap);
+            player.nTraps++; // todo private?
+            JOptionPane.showMessageDialog(this,
+                    String.format("Trap triggered!\n%d coins lost,\n and %d damage taken.",
+                            trap.getFinancialDamage(), trap.getPhysicalDamage()),
+                    trap.getTitle(),
+                    JOptionPane.INFORMATION_MESSAGE);
+            trap.setVisible(false);
+        } else {
+            System.err.println("GamePanel.applyTrap\nnull");
+        }
     }
 
     void applyCastle() {
@@ -667,7 +683,8 @@ public class GamePanel extends JPanel implements ActionListener {
             player.nLoots++; // todo private?
             JOptionPane.showMessageDialog(this,
                     String.format("Loot founded! %d coins gained.", loot.getValue()),
-                    "Loot", JOptionPane.INFORMATION_MESSAGE);
+                    loot.getTitle(),
+                    JOptionPane.INFORMATION_MESSAGE);
             loot.setVisible(false);
         } else {
             System.err.println("GamePanel.applyLoot\nnull");

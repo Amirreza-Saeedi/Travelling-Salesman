@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Time;
 import java.util.Random;
 
 import static java.lang.Math.ceil;
@@ -186,11 +185,9 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         } else if (difficulty == GameConstants.EASY) {
             Player player = players[turn];
-            for (Trap trap : traps) {
-                for (int i = 0; i < NUMBER_OF_TRAPS; i++) {
-                    if (trap.getId() == player.locatedTraps[i])
-                        trap.draw(g);
-                }
+            for (int i = 0; i < NUMBER_OF_TRAPS; ++i) {
+                if (player.locatedTraps[i])
+                    traps[i].draw(g);
             }
         }
     }
@@ -416,8 +413,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
             String title = "Player " + (i + 1);
-            players[i] = new Player(startHouse.x, startHouse.y, startHouse.width, startHouse.height,
-                    i, startHouse._x, startHouse._y, title);
+            players[i] = new Player(startHouse, i, title);
         }
     }
 
@@ -638,7 +634,7 @@ public class GamePanel extends JPanel implements ActionListener {
     void applyFight(Player opponent) {
         System.out.println("main.GamePanel.applyFight");
         System.out.println("opponent = " + opponent);
-        players[turn].fight(opponent, startHouse); // todo random start house
+        players[turn].fight(opponent); // todo random start house
         System.out.println();
 
     }
@@ -658,8 +654,7 @@ public class GamePanel extends JPanel implements ActionListener {
             trap.setVisible(true);
             repaint();
             player.applyTrap(trap);
-            player.locatedTraps[player.nTraps] = trap.getId();
-            player.nTraps++; // todo private?
+            player.locatedTraps[trap.getId()] = true;
             JOptionPane.showMessageDialog(this,
                     String.format("Trap triggered!\n%d coins lost,\n and %d damage taken.",
                             trap.getFinancialDamage(), trap.getPhysicalDamage()),

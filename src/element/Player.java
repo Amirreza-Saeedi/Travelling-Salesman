@@ -2,23 +2,22 @@ package element;
 
 import java.awt.*;
 
-import consts.GameConstants;
 import main.*;
 
 
 public class Player extends Element { // todo extend or not?
-    private static final int INITIAL_POWER = 50;
+    private static final int INITIAL_POWER = 5;
     private static final int INITIAL_CASH = 100;
     public int[] lootedTreasures; // saves looted treasures ID
     public int[] locatedTreasures; // saves located treasures ID
-    public int[] lootedLoots; // saves looted loots ID
-    public int[] locatedTraps; // saves located traps ID
+    public boolean[] locatedTraps; // saves located traps
     private int power;
     private int coin;
     public int nTreasures;
     public int nLocatedTreasure;
-    public int nTraps;
+    private int nTraps;
     public int nLoots;
+    private StartHouse startHouse; // todo create an array for randomizing
 
     private static final Color[] colors = {
             new Color(0xE00000),
@@ -34,9 +33,15 @@ public class Player extends Element { // todo extend or not?
         this.coin = INITIAL_CASH;
         this.lootedTreasures = new int[GamePanel.NUMBER_OF_TREASURES];
         this.locatedTreasures = new int[GamePanel.NUMBER_OF_TREASURES];
-        this.locatedTraps = new int[GamePanel.NUMBER_OF_TRAPS];
+        this.locatedTraps = new boolean[GamePanel.NUMBER_OF_TRAPS];
 
         setVisible(true);
+    }
+
+    public Player(StartHouse startHouse, int id, String title) {
+        this(startHouse.x, startHouse.y, startHouse.width, startHouse.height,
+                id, startHouse._x, startHouse._y, title);
+        this.startHouse = startHouse;
     }
 
     public void draw(Graphics g) { // draws a bordered-filled circle & it's image within
@@ -59,7 +64,7 @@ public class Player extends Element { // todo extend or not?
         g2.drawImage(this.image, xImg, yImg, widthImg, heightImg, null);
     }
 
-    public void fight(Player opponent, StartHouse startHouse) {
+    public void fight(Player opponent) {
         System.out.println("Player.fight");
         Player winner, loser;
         if (this.power >= opponent.power) { // declare winner
@@ -84,10 +89,10 @@ public class Player extends Element { // todo extend or not?
         System.out.println("winner.power = " + winner.power);
 
         // revive the loser
-        revive(loser, startHouse);
+        revive(loser);
     }
 
-    public void revive(Player player, StartHouse startHouse) { // take player to start house
+    public void revive(Player player) { // take player to start house
         player.x = startHouse.x;
         player.y = startHouse.y;
         player._x = startHouse._x;
@@ -111,7 +116,9 @@ public class Player extends Element { // todo extend or not?
 
     public void loseCoin(int amount) {
         if (amount > 0) {
-            coin += amount;
+            coin -= amount;
+            if (coin < 0)
+                coin = 0;
             System.out.println("Player.loseCoin");
             System.out.println("title = " + title);
             System.out.println("amount = " + amount);
@@ -141,7 +148,9 @@ public class Player extends Element { // todo extend or not?
 
     public void losePower(int amount) {
         if (amount > 0) {
-            power += amount;
+            power -= amount;
+            if (power < 0)
+                power = 0;
             System.out.println("Player.losePower");
             System.out.println("title = " + title);
             System.out.println("amount = " + amount);
@@ -171,5 +180,9 @@ public class Player extends Element { // todo extend or not?
         System.out.println("Player.applyTrap");
         loseCoin(trap.financialDamage);
         losePower(trap.physicalDamage);
+        if (power == 0) { // if got killed
+            revive(this);
+        }
+        nTraps++;
     }
 }

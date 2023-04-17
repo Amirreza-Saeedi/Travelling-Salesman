@@ -179,8 +179,19 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void drawTraps(Graphics g) {
-        for (Trap trap : traps) {
-            trap.draw(g);
+        if (difficulty == GameConstants.MEDIUM || difficulty == GameConstants.HARD) {
+            for (Trap trap : traps) {
+                if (trap.isVisible())
+                    trap.draw(g);
+            }
+        } else if (difficulty == GameConstants.EASY) {
+            Player player = players[turn];
+            for (Trap trap : traps) {
+                for (int i = 0; i < NUMBER_OF_TRAPS; i++) {
+                    if (trap.getId() == player.locatedTraps[i])
+                        trap.draw(g);
+                }
+            }
         }
     }
 
@@ -647,6 +658,7 @@ public class GamePanel extends JPanel implements ActionListener {
             trap.setVisible(true);
             repaint();
             player.applyTrap(trap);
+            player.locatedTraps[player.nTraps] = trap.getId();
             player.nTraps++; // todo private?
             JOptionPane.showMessageDialog(this,
                     String.format("Trap triggered!\n%d coins lost,\n and %d damage taken.",

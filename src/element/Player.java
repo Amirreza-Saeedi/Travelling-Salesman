@@ -9,10 +9,10 @@ import main.*;
 public class Player extends Element { // todo extend or not?
     private static final int INITIAL_POWER = 50;
     private static final int INITIAL_CASH = 100;
-    private int[] lootedTreasures; // saves looted treasures ID
-    private int[] locatedTreasures; // saves located treasures ID
-    private int[] lootedLoots; // saves looted loots ID
-    private int[] locatedTraps; // saves located traps ID
+    public int[] lootedTreasures; // saves looted treasures ID
+    public int[] locatedTreasures; // saves located treasures ID
+    public int[] lootedLoots; // saves looted loots ID
+    public int[] locatedTraps; // saves located traps ID
     private int power;
     private int coin;
     public int nTreasures;
@@ -84,10 +84,14 @@ public class Player extends Element { // todo extend or not?
         System.out.println("winner.power = " + winner.power);
 
         // revive the loser
-        loser.x = startHouse.x;
-        loser.y = startHouse.y;
-        loser._x = startHouse._x;
-        loser._y = startHouse._y;
+        revive(loser, startHouse);
+    }
+
+    public void revive(Player player, StartHouse startHouse) { // take player to start house
+        player.x = startHouse.x;
+        player.y = startHouse.y;
+        player._x = startHouse._x;
+        player._y = startHouse._y;
     }
     
     public void gainCoin(int amount) {
@@ -106,7 +110,7 @@ public class Player extends Element { // todo extend or not?
     }
 
     public void loseCoin(int amount) {
-        if (amount < 0) {
+        if (amount > 0) {
             coin += amount;
             System.out.println("Player.loseCoin");
             System.out.println("title = " + title);
@@ -136,7 +140,7 @@ public class Player extends Element { // todo extend or not?
     }
 
     public void losePower(int amount) {
-        if (amount < 0) {
+        if (amount > 0) {
             power += amount;
             System.out.println("Player.losePower");
             System.out.println("title = " + title);

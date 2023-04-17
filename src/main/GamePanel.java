@@ -161,7 +161,8 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void drawTreasures(Graphics g) {
         for (Treasure treasure : treasures) {
-            treasure.draw(g);
+            if (treasure.isVisible())
+                treasure.draw(g);
         }
     }
 
@@ -173,7 +174,8 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void drawLoots(Graphics g) {
         for (Loot loot : loots) {
-            loot.draw(g);
+            if (loot.isVisible())
+                loot.draw(g);
         }
     }
 
@@ -305,8 +307,6 @@ public class GamePanel extends JPanel implements ActionListener {
 
             boardMap.board[x][y] = GameConstants.LOOT; // add house
             this.add(loots[i].getLabel()); // add label
-            Loot loot = loots[i];
-            loot.setVisible(true);
         }
     }
 
@@ -610,7 +610,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         switch (boardMap.board[curPlayer._x][curPlayer._y]) { // then for houses
-            case GameConstants.LOOT:
+            case GameConstants.LOOT: // todo reduce time of searching with resetting house to 0
                 applyLoot();
                 break;
             case GameConstants.TRAP:
@@ -683,16 +683,19 @@ public class GamePanel extends JPanel implements ActionListener {
         Loot loot = (Loot) findElement(new Loot(), player._x, player._y);
 
         if (loot != null) {
-            loot.setVisible(true);
-            repaint();
-            loot.setLooted(true); // todo why doesn't work?
-            player.applyLoot(loot);
-            player.nLoots++; // todo private?
-            JOptionPane.showMessageDialog(this,
-                    String.format("Loot founded! %d coins gained.", loot.getValue()),
-                    loot.getTitle(),
-                    JOptionPane.INFORMATION_MESSAGE);
-            loot.setVisible(false);
+            if (!loot.isLooted()) { // if it is not empty
+                boardMap.board[player._x][player._y] = GameConstants.EMPTY; // free the house
+
+                loot.setVisible(true);
+                repaint();
+                loot.setLooted(true); // todo why doesn't work?
+                player.applyLoot(loot);
+                JOptionPane.showMessageDialog(this,
+                        String.format("Loot founded! %d coins gained.", loot.getValue()),
+                        loot.getTitle(),
+                        JOptionPane.INFORMATION_MESSAGE);
+                loot.setVisible(false);
+            }
         } else {
             System.err.println("GamePanel.applyLoot\nnull");
         }

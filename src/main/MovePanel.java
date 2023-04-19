@@ -1,3 +1,5 @@
+package main;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -61,10 +63,10 @@ public class MovePanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        
+
         g.setColor(Color.ORANGE);
         g.drawRect(moveBox.x, moveBox.y, moveBox.width, moveBox.height);
-        
+
         g2.fillRect(UP.x, UP.y, UP.width, UP.height);
         g2.fillRect(RIGHT.x, RIGHT.y, RIGHT.width, RIGHT.height);
         g2.fillRect(DOWN.x, DOWN.y, DOWN.width, DOWN.height);

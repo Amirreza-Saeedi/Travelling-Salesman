@@ -1,6 +1,6 @@
+package main;
+
 import javax.swing.*;
-import javax.swing.border.LineBorder;
-import java.awt.*;
 
 public class GameFrame extends JFrame {
     // TODO set width and height monitor size dependently

@@ -13,7 +13,7 @@ public class Treasure extends Element implements Lootable { // contains 8 differ
     };
 
     public static final int[] valueList = { // 300_1000
-            900,            1000,               400,            600,
+            900,            1000,               400,            700,
             300,            800,                600,            500
     };
     // TODO add specific icon

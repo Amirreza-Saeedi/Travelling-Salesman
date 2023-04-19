@@ -11,13 +11,10 @@ public abstract class Element extends Rectangle { // Castle, Treasure, Wall, Mar
     protected String title;
     protected JLabel label;
     protected Image image;
-
-    private boolean visible;
+    protected boolean visible;
 
     public int _x;
-
     public int _y;
-
 
     Element(int x, int y, int width, int height, int id, int _x, int _y, String title) { // constructor 1
         super(x, y, width, height);
@@ -77,7 +74,7 @@ public abstract class Element extends Rectangle { // Castle, Treasure, Wall, Mar
 
     public void setVisible(boolean b) { // for solving spoiling items location issue
         visible = b;
-        this.label.setVisible(b);
+//        this.label.setVisible(b);
     }
 
     public void setId(int id) {

@@ -1,4 +1,7 @@
+package consts;
+
 import java.awt.*;
+
 
 public class GameConstants {
     // house constants

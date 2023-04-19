@@ -2,6 +2,7 @@ package main;
 
 import consts.GameConstants;
 import element.*;
+import scoreboard.ScoreboardPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,6 +68,8 @@ public class GamePanel extends JPanel implements ActionListener {
     private int nTrace;
 
     private int turn;
+    private int curQuest = 0;
+    private int[] questList;
 
   /*  enum Turn {
         PLAYER_1,
@@ -108,7 +111,7 @@ public class GamePanel extends JPanel implements ActionListener {
         newMovePanel();
         newScoreboard();
 
-
+        newQuest();
     }
 
 
@@ -461,9 +464,31 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void newQuest() {
+        shuffleQuests();
+        nextQuest();
+    }
+
+    private void shuffleQuests() {
+        questList = new int[NUMBER_OF_TREASURES];
+        for (int i = 0; i < questList.length; i++) { // init
+            questList[i] = i;
+        }
+        for (int i = 0; i < questList.length; i++) { // shuffle
+            int j = random.nextInt(questList.length);
+            int temp = questList[i];
+            questList[i] = questList[j];
+            questList[j] = temp;
+        }
 
     }
 
+    private void nextQuest() {
+        if (curQuest < questList.length) {
+            scoreboardPanel.quest.setQuest(treasures[questList[curQuest++]].getTitle());
+        } else {
+            System.err.println("GamePanel.nextQuest");
+        }
+    }
 
 
     private boolean isWall(int x, int y, boolean optimized) {
@@ -629,6 +654,8 @@ public class GamePanel extends JPanel implements ActionListener {
 
     void applyTreasure() {
         System.out.println("main.GamePanel.applyTreasure");
+        Player player = players[turn];
+//        Treasure treasure = findElement(new Treasure(), player._x, player._y);
         System.out.println();
     }
 

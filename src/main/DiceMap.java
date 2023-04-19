@@ -1,9 +1,11 @@
+package main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
-public class DiceMap extends Rectangle {
-    // TODO random dice throw
+public class DiceMap extends Rectangle { // todo change it to panel
+//    todo change drawStrings to JLabel
     private Image image;
 
     private final Rectangle DICE = new Rectangle();

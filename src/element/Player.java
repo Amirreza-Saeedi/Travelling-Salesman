@@ -16,7 +16,7 @@ public class Player extends Element { // todo extend or not?
     public int nTreasures;
     public int nLocatedTreasure;
     private int nTraps;
-    public int nLoots;
+    private int nLoots;
     private StartHouse startHouse; // todo create an array for randomizing
 
     private static final Color[] colors = {
@@ -174,6 +174,7 @@ public class Player extends Element { // todo extend or not?
     public void applyLoot(Loot loot) {
         System.out.println("Player.applyLoot");
         gainCoin(loot.value);
+        nLoots++;
     }
 
     public void applyTrap(Trap trap) {

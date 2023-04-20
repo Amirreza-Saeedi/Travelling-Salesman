@@ -231,12 +231,12 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void drawTraps(Graphics g) {
-        if (difficulty == GameConstants.MEDIUM || difficulty == GameConstants.HARD) {
+        if (difficulty == GameConstants.MEDIUM || difficulty == GameConstants.HARD) { // depends on isVisible
             for (Trap trap : traps) {
                 if (trap.isVisible())
                     trap.draw(g);
             }
-        } else if (difficulty == GameConstants.EASY) {
+        } else if (difficulty == GameConstants.EASY) { // depends on player's array
             Player player = players[turn];
             for (int i = 0; i < NUMBER_OF_TRAPS; ++i) {
                 if (player.locatedTraps[i])
@@ -311,7 +311,6 @@ public class GamePanel extends JPanel implements ActionListener {
             treasures[i] = new Treasure(boardPanel.xAxis[point.x], boardPanel.yAxis[point.y], UNIT_SIZE, UNIT_SIZE,
                     i, point.x, point.y, Treasure.namesList[i], Treasure.valueList[i]); // set specific name and value
 
-            boardPanel.board[point.x][point.y] = GameConstants.TREASURE; // add house
             this.add(treasures[i].getLabel()); // add label
             j++;
         }
@@ -652,10 +651,22 @@ public class GamePanel extends JPanel implements ActionListener {
 
     }
 
-    void applyTreasure() {
-        System.out.println("main.GamePanel.applyTreasure");
+    void applyTreasure() { // it is called if and only if treasure is announced on quest or is bought from market
         Player player = players[turn];
-//        Treasure treasure = findElement(new Treasure(), player._x, player._y);
+        Treasure treasure = (Treasure) findElement(new Treasure(), player._x, player._y);
+        if (treasure == null) { // check for err
+            System.err.println("GamePanel.applyTreasure\nnull");
+            return;
+        }
+
+        if (!player.locatedTreasures[treasure.getId()]) { // todo find a better arranged approach
+            System.out.println("main.GamePanel.applyTreasure");
+            player.locatedTreasures[treasure.getId()] = true;
+            repaint();
+            JOptionPane.showMessageDialog(this,
+                    String.format("Treasure founded!"),
+                    treasure.getTitle(), JOptionPane.INFORMATION_MESSAGE);
+        }
         System.out.println();
     }
 
@@ -667,9 +678,9 @@ public class GamePanel extends JPanel implements ActionListener {
 
         if (trap != null) {
             trap.setVisible(true);
-            repaint();
             player.applyTrap(trap);
             player.locatedTraps[trap.getId()] = true;
+            repaint();
             JOptionPane.showMessageDialog(this,
                     String.format("Trap triggered!\n%d coins lost,\n and %d damage taken.",
                             trap.getFinancialDamage(), trap.getPhysicalDamage()),

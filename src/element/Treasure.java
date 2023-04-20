@@ -29,6 +29,9 @@ public class Treasure extends Element implements Lootable { // contains 8 differ
         this(x, y, width, height, 0, 0, 0, title, 0);
     }
 
+    public Treasure() {
+
+    }
     public void setValue(int value) {
         this.value = value;
     }

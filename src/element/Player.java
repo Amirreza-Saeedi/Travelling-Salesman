@@ -6,11 +6,11 @@ import main.*;
 
 
 public class Player extends Element { // todo extend or not?
-    private static final int INITIAL_POWER = 5;
+    private static final int INITIAL_POWER = 50;
     private static final int INITIAL_CASH = 100;
-    public int[] lootedTreasures; // saves looted treasures ID
-    public int[] locatedTreasures; // saves located treasures ID
-    public boolean[] locatedTraps; // saves located traps
+    public boolean[] lootedTreasures; // determine looted treasures
+    public boolean[] locatedTreasures; // determine located treasures
+    public boolean[] locatedTraps; // determine located traps
     private int power;
     private int coin;
     public int nTreasures;
@@ -19,7 +19,7 @@ public class Player extends Element { // todo extend or not?
     private int nLoots;
     private StartHouse startHouse; // todo create an array for randomizing
 
-    private static final Color[] colors = {
+    private static final Color[] colors = { // todo football team icons
             new Color(0xE00000),
             new Color(0xFF0041D3, true)
     };
@@ -31,8 +31,8 @@ public class Player extends Element { // todo extend or not?
 
         this.power = INITIAL_POWER;
         this.coin = INITIAL_CASH;
-        this.lootedTreasures = new int[GamePanel.NUMBER_OF_TREASURES];
-        this.locatedTreasures = new int[GamePanel.NUMBER_OF_TREASURES];
+        this.lootedTreasures = new boolean[GamePanel.NUMBER_OF_TREASURES];
+        this.locatedTreasures = new boolean[GamePanel.NUMBER_OF_TREASURES];
         this.locatedTraps = new boolean[GamePanel.NUMBER_OF_TRAPS];
 
         setVisible(true);

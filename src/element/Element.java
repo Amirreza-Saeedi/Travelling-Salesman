@@ -68,7 +68,7 @@ public abstract class Element extends Rectangle { // Castle, Treasure, Wall, Mar
         return title + id;
     }
 
-    public boolean isVisible() {
+    public boolean isVisible() { // todo not necessary for most
         return visible;
     }
 

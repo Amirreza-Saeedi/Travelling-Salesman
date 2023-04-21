@@ -212,18 +212,20 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void drawTreasures(Graphics g) {
         for (Treasure treasure : treasures) {
-            if (treasure.isVisible())
+            Player player = players[turn];
+            int id = treasure.getId();
+            if (player.lootedTreasures[id] && !player.lootedTreasures[id])
                 treasure.draw(g);
         }
     }
 
-    private void drawMarkets(Graphics g) {
+    private void drawMarkets(Graphics g) { // show always
         for (Market market : markets) {
             market.draw(g);
         }
     }
 
-    private void drawLoots(Graphics g) {
+    private void drawLoots(Graphics g) { // todo find better algorithm
         for (Loot loot : loots) {
             if (loot.isVisible())
                 loot.draw(g);
@@ -231,12 +233,12 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void drawTraps(Graphics g) {
-        if (difficulty == GameConstants.MEDIUM || difficulty == GameConstants.HARD) { // depends on isVisible
+        if (difficulty == GameConstants.MEDIUM || difficulty == GameConstants.HARD) { // show temporarily
             for (Trap trap : traps) {
                 if (trap.isVisible())
                     trap.draw(g);
             }
-        } else if (difficulty == GameConstants.EASY) { // depends on player's array
+        } else if (difficulty == GameConstants.EASY) { // show permanently
             Player player = players[turn];
             for (int i = 0; i < NUMBER_OF_TRAPS; ++i) {
                 if (player.locatedTraps[i])
@@ -705,6 +707,7 @@ public class GamePanel extends JPanel implements ActionListener {
             treasure.setLooted(true);
             boardPanel.board[treasure._x][treasure._y] = 0; // clear the house
             repaint(); // todo cross the treasure image
+//            todo send it from board to scoreboard
             JOptionPane.showMessageDialog(this,
                     String.format("%s delivered. %d coins earned.", treasure.getTitle(), treasure.getValue()),
                     "Castle", JOptionPane.INFORMATION_MESSAGE);

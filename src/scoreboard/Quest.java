@@ -20,6 +20,10 @@ public class Quest {
         label.setText("Quest: " + this.title);
     }
 
+//    public Treasure getQuest() {
+//        return
+//    }
+
     public boolean equals(int id) {
         return id == this.id;
     }

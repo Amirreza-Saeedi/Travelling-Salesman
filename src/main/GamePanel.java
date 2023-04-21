@@ -168,7 +168,10 @@ public class GamePanel extends JPanel implements ActionListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         draw(g);
-
+        // temp
+        Rectangle r = scoreboardPanel.quest.getRectangle();
+        g.setColor(new Color(0x7CFFFFFF, true));
+        g.fillRect(r.x, r.y, r.width, r.height);
 
     }
 
@@ -214,7 +217,7 @@ public class GamePanel extends JPanel implements ActionListener {
         for (Treasure treasure : treasures) {
             Player player = players[turn];
             int id = treasure.getId();
-            if (player.lootedTreasures[id] && !player.lootedTreasures[id])
+            if (player.locatedTreasures[id] && !treasure.isLooted())
                 treasure.draw(g);
         }
     }
@@ -313,6 +316,7 @@ public class GamePanel extends JPanel implements ActionListener {
             treasures[i] = new Treasure(boardPanel.xAxis[point.x], boardPanel.yAxis[point.y], UNIT_SIZE, UNIT_SIZE,
                     i, point.x, point.y, Treasure.namesList[i], Treasure.valueList[i]); // set specific name and value
 
+            boardPanel.board[point.x][point.y] = GameConstants.TREASURE;
             this.add(treasures[i].getLabel()); // add label
             j++;
         }
@@ -487,7 +491,7 @@ public class GamePanel extends JPanel implements ActionListener {
         if (curQuest < questList.length) {
             Treasure treasure = treasures[questList[curQuest]];
             scoreboardPanel.quest.setQuest(treasure);
-            boardPanel.board[treasure._x][treasure._y] = GameConstants.TREASURE; // add location to board
+            boardPanel.board[treasure._x][treasure._y] = GameConstants.QUEST; // add location to board
             ++ curQuest;
         } else {
             System.err.println("GamePanel.nextQuest");
@@ -633,7 +637,7 @@ public class GamePanel extends JPanel implements ActionListener {
             case GameConstants.TRAP:
                 applyTrap();
                 break;
-            case GameConstants.TREASURE:
+            case GameConstants.QUEST: // just the quest
                 applyTreasure();
                 break;
             case GameConstants.CASTLE:
@@ -705,7 +709,7 @@ public class GamePanel extends JPanel implements ActionListener {
             Treasure treasure = treasures[questID];
             player.applyTreasure(treasure);
             treasure.setLooted(true);
-            boardPanel.board[treasure._x][treasure._y] = 0; // clear the house
+            boardPanel.board[treasure._x][treasure._y] = GameConstants.EMPTY; // clear the house
             repaint(); // todo cross the treasure image
 //            todo send it from board to scoreboard
             JOptionPane.showMessageDialog(this,

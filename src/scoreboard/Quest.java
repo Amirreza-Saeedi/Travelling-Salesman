@@ -11,6 +11,7 @@ public class Quest {
     Image image;
     int id;
     JLabel label = new JLabel("Quest: " + title);
+    Rectangle rectangle;
     Quest() {
     }
 
@@ -18,11 +19,12 @@ public class Quest {
         this.id = treasure.getId();
         this.title = treasure.getTitle();
         label.setText("Quest: " + this.title);
+        rectangle = treasure;
     }
 
-//    public Treasure getQuest() {
-//        return
-//    }
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
 
     public boolean equals(int id) {
         return id == this.id;

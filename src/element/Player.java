@@ -186,4 +186,22 @@ public class Player extends Element { // todo extend or not?
         }
         nTraps++;
     }
+
+    public void applyTreasure(Treasure treasure) {
+
+        System.out.println("Player.applyTreasure");
+        gainCoin(treasure.getValue());
+        this.lootedTreasures[treasure.getId()] = true;
+        System.out.println(this);
+
+    }
+
+    @Override
+    public String toString() {
+        System.out.println("title = " + title);
+        System.out.println("id = " + id);
+        System.out.println("coin = " + coin);
+        System.out.println("power = " + power);
+        return "";
+    }
 }

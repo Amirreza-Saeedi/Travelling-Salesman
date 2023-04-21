@@ -69,7 +69,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private int turn;
     private int curQuest = 0;
-    private int[] questList;
+    private int[] questList; // shuffled list of treasures id
 
   /*  enum Turn {
         PLAYER_1,
@@ -467,7 +467,7 @@ public class GamePanel extends JPanel implements ActionListener {
         nextQuest();
     }
 
-    private void shuffleQuests() {
+    private void shuffleQuests() { // shuffles array
         questList = new int[NUMBER_OF_TREASURES];
         for (int i = 0; i < questList.length; i++) { // init
             questList[i] = i;
@@ -483,7 +483,10 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void nextQuest() {
         if (curQuest < questList.length) {
-            scoreboardPanel.quest.setQuest(treasures[questList[curQuest++]].getTitle());
+            Treasure treasure = treasures[questList[curQuest]];
+            scoreboardPanel.quest.setQuest(treasure);
+            boardPanel.board[treasure._x][treasure._y] = GameConstants.TREASURE; // add location to board
+            ++ curQuest;
         } else {
             System.err.println("GamePanel.nextQuest");
         }
@@ -659,13 +662,13 @@ public class GamePanel extends JPanel implements ActionListener {
             return;
         }
 
-        if (!player.locatedTreasures[treasure.getId()]) { // todo find a better arranged approach
+        if (!player.locatedTreasures[treasure.getId()]) { // todo find a better arrangement
             System.out.println("main.GamePanel.applyTreasure");
             player.locatedTreasures[treasure.getId()] = true;
             repaint();
             JOptionPane.showMessageDialog(this,
-                    String.format("Treasure founded!"),
-                    treasure.getTitle(), JOptionPane.INFORMATION_MESSAGE);
+                    String.format("%s founded! Deliver it to castle to earn its prize.", treasure.getTitle()),
+                    "Treasure", JOptionPane.INFORMATION_MESSAGE);
         }
         System.out.println();
     }
@@ -692,8 +695,25 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
-    void applyCastle() {
+    void applyCastle() { // is called when
         System.out.println("main.GamePanel.applyCastle");
+        Player player = players[turn];
+        int questID = scoreboardPanel.quest.getId();
+        if (player.locatedTreasures[questID]) { // if player had found the treasure
+            Treasure treasure = treasures[questID];
+            player.applyTreasure(treasure);
+            treasure.setLooted(true);
+            boardPanel.board[treasure._x][treasure._y] = 0; // clear the house
+            repaint(); // todo cross the treasure image
+            JOptionPane.showMessageDialog(this,
+                    String.format("%s delivered. %d coins earned.", treasure.getTitle(), treasure.getValue()),
+                    "Castle", JOptionPane.INFORMATION_MESSAGE);
+            nextQuest(); // start next quest
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "\"Hmm. Find wanted treasure then come back to earn your prize\".",
+                    "Castle", JOptionPane.INFORMATION_MESSAGE);
+        }
         System.out.println();
     }
 

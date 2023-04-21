@@ -9,23 +9,22 @@ import java.util.Objects;
 public class Quest {
     String title = "Test";
     Image image;
+    int id;
     JLabel label = new JLabel("Quest: " + title);
     Quest() {
     }
 
-    public void setQuest(String title) {
-        this.title = title;
+    public void setQuest(Treasure treasure) {
+        this.id = treasure.getId();
+        this.title = treasure.getTitle();
         label.setText("Quest: " + this.title);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Treasure) {
-            Treasure treasure = (Treasure) obj;
-            return treasure.getTitle() == title;
-        } else {
-            return false;
-        }
+    public boolean equals(int id) {
+        return id == this.id;
     }
 
+    public int getId() {
+        return id;
+    }
 }

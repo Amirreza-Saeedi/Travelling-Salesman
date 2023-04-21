@@ -8,11 +8,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Random;
 
 import static java.lang.Math.ceil;
 
-public class GamePanel extends JPanel implements ActionListener {
+public class GamePanel extends JPanel implements ActionListener, KeyListener {
     //screen and map sizes
     private static final int FRAME_WIDTH = 1500;
     private static final double FRAME_RATIO = 4.0 / 7;
@@ -71,19 +73,19 @@ public class GamePanel extends JPanel implements ActionListener {
     private int curQuest = 0;
     private int[] questList; // shuffled list of treasures id
 
+
   /*  enum Turn {
         PLAYER_1,
         PLAYER_2;
     };*/
-
 
     enum Status {
         PLAYER_1_WON,
         PLAYER_2_WON,
         DRAW, // TODO draw?
         PLAYING;
-    };
 
+    };
 
 
     public GamePanel() {
@@ -92,6 +94,8 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setPreferredSize(SCREEN_SIZE);
         this.setBackground(Color.black);
         this.setLayout(null);
+        this.addKeyListener(this);
+        this.setFocusable(true);
 
         // game settings
         this.turn = GameConstants.PLAYER_1;
@@ -152,6 +156,7 @@ public class GamePanel extends JPanel implements ActionListener {
         movePanel.downButton.addActionListener(this);
         movePanel.leftButton.addActionListener(this);
         add(movePanel);
+        
     }
 
     private void newScoreboard() { // panel at upper-right
@@ -168,9 +173,9 @@ public class GamePanel extends JPanel implements ActionListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         draw(g);
-        // temp
+        // todo temp
         Rectangle r = scoreboardPanel.quest.getRectangle();
-        g.setColor(new Color(0x7CFFFFFF, true));
+        g.setColor(new Color(0x37FFFFFF, true));
         g.fillRect(r.x, r.y, r.width, r.height);
 
     }
@@ -488,13 +493,14 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void nextQuest() {
+        System.out.println("GamePanel.nextQuest");
         if (curQuest < questList.length) {
             Treasure treasure = treasures[questList[curQuest]];
             scoreboardPanel.quest.setQuest(treasure);
             boardPanel.board[treasure._x][treasure._y] = GameConstants.QUEST; // add location to board
             ++ curQuest;
         } else {
-            System.err.println("GamePanel.nextQuest");
+            scoreboardPanel.quest.setQuest(null);
         }
     }
 
@@ -801,7 +807,7 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
 
-    
+
     void moveListener() { // things to do after each move
         diceNumber--;
         nTrace++;
@@ -865,5 +871,68 @@ public class GamePanel extends JPanel implements ActionListener {
             repaint();
         }
 
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        System.out.println("e.getKeyChar() = " + e.getKeyChar());
+        System.out.println("e.getKeyLocation() = " + e.getKeyLocation());
+        System.out.println("e.getKeyCode() = " + e.getKeyCode());
+//
+//        switch (e.getKeyCode()) {
+//            case 37: // left arrow
+//                movePanel.leftButton.setFocusPainted(true);
+//                break;
+//            case 38: // up arrow
+//                movePanel.upButton.setFocusPainted(true);
+//                break;
+//            case 39: // right arrow
+//                movePanel.rightButton.setFocusPainted(true);
+//                break;
+//            case 40: // down arrow
+//                movePanel.downButton.setFocusPainted(true);
+//                break;
+//
+//        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+//        switch (e.getKeyCode()) {
+//            case 37: // left arrow
+//                movePanel.leftButton.setSelected(true);
+//                break;
+//            case 38: // up arrow
+//                movePanel.upButton.setSelected(true);
+//                break;
+//            case 39: // right arrow
+//                movePanel.rightButton.setSelected(true);
+//                break;
+//            case 40: // down arrow
+//                movePanel.downButton.setSelected(true);
+//                break;
+//
+//        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case 37: // left arrow
+                movePanel.leftButton.doClick();
+                break;
+            case 38: // up arrow
+                movePanel.upButton.doClick();
+                break;
+            case 39: // right arrow
+                movePanel.rightButton.doClick();
+                break;
+            case 40: // down arrow
+                movePanel.downButton.doClick();
+                break;
+            case ' ':
+                diceButton.doClick();
+                break;
+        }
     }
 }

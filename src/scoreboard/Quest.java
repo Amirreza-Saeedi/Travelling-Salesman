@@ -16,6 +16,11 @@ public class Quest {
     }
 
     public void setQuest(Treasure treasure) {
+        if (treasure == null) {
+            this.id = -1;
+            this.title = "";
+            label.setText("Quest: " + title);
+        }
         this.id = treasure.getId();
         this.title = treasure.getTitle();
         label.setText("Quest: " + this.title);

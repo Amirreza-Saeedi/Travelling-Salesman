@@ -3,6 +3,8 @@ package main;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 
 public class MovePanel extends JPanel {
@@ -43,21 +45,26 @@ public class MovePanel extends JPanel {
         upButton.setToolTipText("Up");
         upButton.setBounds(UP);
         add(upButton);
+        upButton.setFocusable(false);
 
         rightButton = new JButton("R");
         rightButton.setToolTipText("Right");
         rightButton.setBounds(RIGHT);
         add(rightButton);
+        rightButton.setFocusable(false);
+
 
         downButton = new JButton("D");
         downButton.setToolTipText("Down");
         downButton.setBounds(DOWN);
         add(downButton);
+        downButton.setFocusable(false);
 
         leftButton = new JButton("L");
         leftButton.setToolTipText("Left");
         leftButton.setBounds(LEFT);
         add(leftButton);
+        leftButton.setFocusable(false);
     }
 
     public void paintComponent(Graphics g) {
@@ -72,4 +79,5 @@ public class MovePanel extends JPanel {
         g2.fillRect(DOWN.x, DOWN.y, DOWN.width, DOWN.height);
         g2.fillRect(LEFT.x, LEFT.y, LEFT.width, LEFT.height);
     }
+
 }

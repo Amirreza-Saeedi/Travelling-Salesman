@@ -16,7 +16,8 @@ public class GameFrame extends JFrame {
         this.setTitle("Travelling Salesman");
         this.setResizable(false);
         // TODO why doesn't work? this.setBackground(Color.black);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        if (panel.isEnabled())
+            this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);

@@ -10,6 +10,10 @@ public class Market extends Element {
         this.setColor(new Color(0xFFC002));
         newLabel(getTitle()); // create label
 
+
         setVisible(true);
     }
+
 }
+
+

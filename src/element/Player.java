@@ -4,6 +4,8 @@ import java.awt.*;
 
 import main.*;
 
+import javax.swing.*;
+
 
 public class Player extends Element { // todo extend or not?
     private static final int INITIAL_POWER = 50;
@@ -193,7 +195,20 @@ public class Player extends Element { // todo extend or not?
         gainCoin(treasure.getValue());
         this.lootedTreasures[treasure.getId()] = true;
         System.out.println(this);
+        System.out.println();
+    }
 
+    public void buyWeapon(Weapon weapon) {
+        System.out.println("Player.applyWeapon");
+        System.out.println();
+        loseCoin(weapon.price);
+        gainPower(weapon.power);
+        System.out.println(this);
+        System.out.println();
+    }
+
+    public void buyTreasureMap(Treasure treasure) {
+        this.locatedTreasures[treasure.getId()] = true;
     }
 
     @Override

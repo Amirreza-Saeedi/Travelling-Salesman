@@ -45,7 +45,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
     // TODO difficulty
-    public int difficulty;
+    public static int difficulty;
 
     //    JPanel mapPanel; // TODO convert mapRect to panel?
     ScoreboardPanel scoreboardPanel;
@@ -646,6 +646,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             case GameConstants.QUEST: // just the quest
                 applyTreasure();
                 break;
+//                todo empty massage
             case GameConstants.CASTLE:
                 applyCastle();
                 break;
@@ -732,6 +733,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     void applyMarket() {
         System.out.println("main.GamePanel.applyMarket");
+        Treasure treasure = pickRandomTreasure();
+        if (treasure == null) {
+            System.err.println("GamePanel.applyMarket");
+        }
+        MarketPanel marketPanel = new MarketPanel(new Rectangle(getX(), getX(), getWidth(), getHeight()),
+                treasure, players[turn]);
+        add(marketPanel);
+        setEnabled(false);
         System.out.println();
     }
 
@@ -806,6 +815,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         return null;
     }
 
+    Treasure pickRandomTreasure() {
+        int i = random.nextInt(NUMBER_OF_TREASURES);
+        Player player = players[turn];
+        for (int j = 0; j < NUMBER_OF_TREASURES; j++) {
+            int index = i % NUMBER_OF_TREASURES;
+            if (!treasures[index].isLooted() && !player.locatedTreasures[index]) {
+                return treasures[index];
+            } else i++;
+        }
+        return null;
+    }
+
 
 
     void moveListener() { // things to do after each move
@@ -819,58 +840,59 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // simplify variables:
-        Player player = players[turn];
+        if (isEnabled()) {
+            // simplify variables:
+            Player player = players[turn];
 
-        // dice:
-        if (e.getSource() == diceButton) {
-            diceNumber = diceMap.throwDice();
-            diceButton.setEnabled(false);
-            repaint();
+            // dice:
+            if (e.getSource() == diceButton) {
+                diceNumber = diceMap.throwDice();
+                diceButton.setEnabled(false);
+                repaint();
+            }
+
+            // moves:
+            else if (e.getSource() == movePanel.upButton && diceNumber != 0) { // go up
+                traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+                player.y -= boardPanel.UNIT_SIZE;
+                player._y--;
+
+                repaint();
+                moveListener();
+                repaint();
+
+            } else if (e.getSource() == movePanel.rightButton && diceNumber != 0) { // go right
+                traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+                player.x += boardPanel.UNIT_SIZE;
+                player._x++;
+
+                repaint();
+                moveListener();
+                repaint();
+
+            } else if (e.getSource() == movePanel.downButton && diceNumber != 0) { // go down
+                traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+                player.y += boardPanel.UNIT_SIZE;
+                player._y++;
+
+                repaint();
+                moveListener();
+                repaint();
+
+            } else if (e.getSource() == movePanel.leftButton && diceNumber != 0) { // go left
+                traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+                player.x -= boardPanel.UNIT_SIZE;
+                player._x--;
+
+                repaint();
+                moveListener();
+                repaint();
+            }
         }
-
-        // moves:
-        else if (e.getSource() == movePanel.upButton && diceNumber != 0) { // go up
-            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
-
-            player.y -= boardPanel.UNIT_SIZE;
-            player._y--;
-
-            repaint();
-            moveListener();
-            repaint();
-
-        } else if (e.getSource() == movePanel.rightButton && diceNumber != 0) { // go right
-            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
-
-            player.x += boardPanel.UNIT_SIZE;
-            player._x++;
-
-            repaint();
-            moveListener();
-            repaint();
-
-        } else if (e.getSource() == movePanel.downButton && diceNumber != 0) { // go down
-            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
-
-            player.y += boardPanel.UNIT_SIZE;
-            player._y++;
-
-            repaint();
-            moveListener();
-            repaint();
-
-        } else if (e.getSource() == movePanel.leftButton && diceNumber != 0) { // go left
-            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
-
-            player.x -= boardPanel.UNIT_SIZE;
-            player._x--;
-
-            repaint();
-            moveListener();
-            repaint();
-        }
-
     }
 
     @Override

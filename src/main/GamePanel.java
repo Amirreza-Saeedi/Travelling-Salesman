@@ -50,6 +50,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     //    JPanel mapPanel; // TODO convert mapRect to panel?
     ScoreboardPanel scoreboardPanel;
     BoardMap boardPanel;
+    Market.MarketPanel marketPanel = null;
     private final Random random = new Random();
     private Castle castle;
     private Loot[] loots;
@@ -632,8 +633,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         for (int i = turn, j = 0; j < NUMBER_OF_PLAYERS - 1; ++i, ++j) { // first check for fight
             int nxtTurn = (i + 1) % NUMBER_OF_PLAYERS;
-            if (curPlayer._x == players[nxtTurn]._x && curPlayer._y == players[nxtTurn]._y)
-                applyFight(players[nxtTurn]);
+            if (curPlayer._x == players[nxtTurn]._x && curPlayer._y == players[nxtTurn]._y) {
+                if (!applyFight(players[nxtTurn])) // fight then if lose don't check houses for him
+                    return;
+
+            }
         }
 
         switch (boardPanel.board[curPlayer._x][curPlayer._y]) { // then for houses
@@ -659,12 +663,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     }
 
-    void applyFight(Player opponent) {
-        System.out.println("main.GamePanel.applyFight");
-        System.out.println("opponent = " + opponent);
-        players[turn].fight(opponent); // todo random start house
-        System.out.println();
-
+    boolean applyFight(Player opponent) {
+        return players[turn].fight(opponent); // todo random start house
     }
 
     void applyTreasure() { // it is called if and only if treasure is announced on quest or is bought from market
@@ -737,10 +737,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (treasure == null) {
             System.err.println("GamePanel.applyMarket");
         }
-        MarketPanel marketPanel = new MarketPanel(new Rectangle(getX(), getX(), getWidth(), getHeight()),
+        marketPanel = new Market.MarketPanel(new Rectangle(getX(), getX(), getWidth(), getHeight()),
                 treasure, players[turn]);
+        // add to listener
+        for (JButton button : marketPanel.getButtons()) {
+            button.addActionListener(this);
+        }
         add(marketPanel);
-        setEnabled(false);
+//        setEnabled(false);
+
         System.out.println();
     }
 
@@ -840,7 +845,33 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (isEnabled()) {
+        // market panel
+        if (marketPanel != null && marketPanel.isRunning()) {
+            System.out.println("GamePanel.actionPerformed");
+            if (e.getSource() == marketPanel.weaponsButtons[0]) { // btn 1
+                marketPanel.buyWeapon(marketPanel.weapons[0]);
+                marketPanel.returnButton.doClick();
+            } else if (e.getSource() == marketPanel.weaponsButtons[1]) { // btn 2
+                marketPanel.buyWeapon(marketPanel.weapons[1]);
+                marketPanel.returnButton.doClick();
+            } else if (e.getSource() == marketPanel.weaponsButtons[2]) { // btn 3
+                marketPanel.buyWeapon(marketPanel.weapons[2]);
+                marketPanel.returnButton.doClick();
+            } else if (e.getSource() == marketPanel.treasureButton) { // btn 4
+                marketPanel.buyTreasure();
+                marketPanel.returnButton.doClick();
+            } else if (e.getSource() == marketPanel.returnButton) { // ret btn
+                marketPanel.returnToGame();
+                remove(marketPanel);
+                setEnabled(true);
+                System.err.println("RETURN");
+                repaint();
+            }
+            System.out.println();
+        }
+
+        // main panel
+        else {
             // simplify variables:
             Player player = players[turn];
 
@@ -893,6 +924,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 repaint();
             }
         }
+
     }
 
     @Override
@@ -900,61 +932,51 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         System.out.println("e.getKeyChar() = " + e.getKeyChar());
         System.out.println("e.getKeyLocation() = " + e.getKeyLocation());
         System.out.println("e.getKeyCode() = " + e.getKeyCode());
-//
-//        switch (e.getKeyCode()) {
-//            case 37: // left arrow
-//                movePanel.leftButton.setFocusPainted(true);
-//                break;
-//            case 38: // up arrow
-//                movePanel.upButton.setFocusPainted(true);
-//                break;
-//            case 39: // right arrow
-//                movePanel.rightButton.setFocusPainted(true);
-//                break;
-//            case 40: // down arrow
-//                movePanel.downButton.setFocusPainted(true);
-//                break;
-//
-//        }
+
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-//        switch (e.getKeyCode()) {
-//            case 37: // left arrow
-//                movePanel.leftButton.setSelected(true);
-//                break;
-//            case 38: // up arrow
-//                movePanel.upButton.setSelected(true);
-//                break;
-//            case 39: // right arrow
-//                movePanel.rightButton.setSelected(true);
-//                break;
-//            case 40: // down arrow
-//                movePanel.downButton.setSelected(true);
-//                break;
-//
-//        }
     }
+
 
     @Override
     public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case 37: // left arrow
-                movePanel.leftButton.doClick();
-                break;
-            case 38: // up arrow
-                movePanel.upButton.doClick();
-                break;
-            case 39: // right arrow
-                movePanel.rightButton.doClick();
-                break;
-            case 40: // down arrow
-                movePanel.downButton.doClick();
-                break;
-            case ' ':
-                diceButton.doClick();
-                break;
+        // market panel
+        if (marketPanel != null && marketPanel.isRunning()) {
+            if (e.getKeyCode() == '1') { // btn 1
+                marketPanel.weaponsButtons[0].doClick();
+            } else if (e.getKeyCode() == '2') { // btn 2
+                marketPanel.weaponsButtons[1].doClick();
+            } else if (e.getKeyCode() == '3') { // btn 3
+                marketPanel.weaponsButtons[2].doClick();
+            } else if (e.getKeyCode() == '4') { // btn 4
+                marketPanel.treasureButton.doClick();
+            } else if (e.getKeyCode() == 27) {
+                marketPanel.returnButton.doClick();
+            }
+        }
+
+        // main panel
+        else {
+            switch (e.getKeyCode()) {
+                case 37: // left arrow
+                    movePanel.leftButton.doClick();
+                    break;
+                case 38: // up arrow
+                    movePanel.upButton.doClick();
+                    break;
+                case 39: // right arrow
+                    movePanel.rightButton.doClick();
+                    break;
+                case 40: // down arrow
+                    movePanel.downButton.doClick();
+                    break;
+                case ' ':
+                    diceButton.doClick();
+                    break;
+            }
+
         }
     }
 }

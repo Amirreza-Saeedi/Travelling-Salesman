@@ -66,15 +66,18 @@ public class Player extends Element { // todo extend or not?
         g2.drawImage(this.image, xImg, yImg, widthImg, heightImg, null);
     }
 
-    public void fight(Player opponent) {
+    public boolean fight(Player opponent) {
         System.out.println("Player.fight");
         Player winner, loser;
+        boolean result;
         if (this.power >= opponent.power) { // declare winner
             winner = this;
             loser = opponent;
+            result = true;
         } else {
             winner = opponent;
             loser = this;
+            result = false;
         }
         System.out.println("winner = " + winner);
         System.out.println("loser = " + loser);
@@ -92,6 +95,7 @@ public class Player extends Element { // todo extend or not?
 
         // revive the loser
         revive(loser);
+        return result;
     }
 
     public void revive(Player player) { // take player to start house
@@ -207,7 +211,8 @@ public class Player extends Element { // todo extend or not?
         System.out.println();
     }
 
-    public void buyTreasureMap(Treasure treasure) {
+    public void buyTreasureMap(Treasure treasure, int price) {
+        loseCoin(price);
         this.locatedTreasures[treasure.getId()] = true;
     }
 

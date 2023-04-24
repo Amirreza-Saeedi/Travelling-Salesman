@@ -712,17 +712,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         System.out.println("main.GamePanel.applyCastle");
         Player player = players[turn];
         int questID = scoreboardPanel.quest.getId();
-        if (player.locatedTreasures[questID]) { // if player had found the treasure
+
+        if (player.locatedTreasures[questID]) { // if player has treasure address
             Treasure treasure = treasures[questID];
             player.applyTreasure(treasure);
             treasure.setLooted(true);
             boardPanel.board[treasure._x][treasure._y] = GameConstants.EMPTY; // clear the house
+            scoreboardPanel.updateState(treasure, player.getId()); // update scoreboard
+
             repaint(); // todo cross the treasure image
 //            todo send it from board to scoreboard
+
             JOptionPane.showMessageDialog(this,
                     String.format("%s delivered. %d coins earned.", treasure.getTitle(), treasure.getValue()),
                     "Castle", JOptionPane.INFORMATION_MESSAGE);
             nextQuest(); // start next quest
+
         } else {
             JOptionPane.showMessageDialog(this,
                     "\"Hmm. Find wanted treasure then come back to earn your prize\".",

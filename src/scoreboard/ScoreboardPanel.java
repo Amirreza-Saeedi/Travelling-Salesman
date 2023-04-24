@@ -1,6 +1,9 @@
 package scoreboard;
 
+import element.Loot;
 import element.Player;
+import element.Trap;
+import element.Treasure;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -22,8 +25,8 @@ public class ScoreboardPanel extends JPanel {
     private JLabel[] treasureLabels;
     private JLabel[] powerLabels;
     private JLabel[] coinLabels;
-
     private int unit;
+    private JLabel[] changesLabels = null;
 
     private Timer timer = new Timer(1000, new ActionListener() {
         @Override
@@ -64,7 +67,73 @@ public class ScoreboardPanel extends JPanel {
         }
     }
 
-//    public void updateState()
+    private JLabel newChangeLabel(JLabel topLabel, String text, Color color) { // copy size & font
+        JLabel label = new JLabel(text);
+//        label.setOpaque(true);
+        label.setBounds(topLabel.getX(), topLabel.getY() + topLabel.getHeight(),
+                topLabel.getWidth(), topLabel.getHeight());
+        label.setForeground(color);
+        label.setFont(topLabel.getFont());
+        return label;
+    }
+    private void removeLastChanges() { // called before updates
+        if (changesLabels != null) {
+            for (JLabel label : changesLabels) {
+                remove(label);
+            }
+        }
+    }
+
+    public void updateState(Treasure treasure, int playerID) { // called by applyTreasure
+        removeLastChanges();
+        Player player = players[playerID];
+
+        // update current value X2
+        JLabel treasureLabel = treasureLabels[playerID];
+        treasureLabel.setText("T:" + player.nTreasures);
+        JLabel coinLabel = coinLabels[playerID];
+        coinLabel.setText(("C:" + player.getCoin()));
+
+        // show applied changes X2
+        JLabel tChangesLabel = newChangeLabel(treasureLabel, String.format("%+d", 1), Color.GREEN);
+        JLabel cChangesLabel = newChangeLabel(coinLabel, String.format("%+d", treasure.getValue()), Color.GREEN);
+
+        // add to changesLabels
+        int i = 0;
+        changesLabels = new JLabel[2];
+        changesLabels[i++] = tChangesLabel;
+        changesLabels[i++] = cChangesLabel;
+        for (JLabel label : changesLabels) { // add to panel
+            add(label);
+        }
+    }
+    public void updateState(Loot loot, int playerID) {
+//        removeLastChanges();
+//        Player player = players[playerID];
+//
+//        // update current value X2
+//        JLabel treasureLabel = treasureLabels[playerID];
+//        treasureLabel.setText("T:" + player.nTreasures);
+//        JLabel coinLabel = coinLabels[playerID];
+//        coinLabel.setText(("C:" + player.getCoin()));
+//
+//        // show applied changes X2
+//        JLabel tChangesLabel = newChangeLabel(treasureLabel, String.format("%+d", treasure.getValue()), Color.GREEN);
+//        JLabel cChangesLabel = newChangeLabel(coinLabel, String.format("%d", treasure.getValue()), Color.GREEN);
+//
+//        // add to changesLabels
+//        int i = 0;
+//        changesLabels = new JLabel[2];
+//        changesLabels[i++] = tChangesLabel;
+//        changesLabels[i++] = cChangesLabel;
+//        for (JLabel label : changesLabels) { // add to panel
+//            add(label);
+//        }
+    }
+    public void updateState(Trap trap) {
+
+    }
+
 
     private void newPlayers(Player[] players) {
         // init

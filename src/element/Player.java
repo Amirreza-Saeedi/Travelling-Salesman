@@ -198,6 +198,7 @@ public class Player extends Element { // todo extend or not?
         System.out.println("Player.applyTreasure");
         gainCoin(treasure.getValue());
         this.lootedTreasures[treasure.getId()] = true;
+        nTreasures++;
         System.out.println(this);
         System.out.println();
     }

@@ -70,7 +70,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Trace[] traces;
     private int nTrace;
 
-    private int turn;
+    public int turn;
     private int curQuest = 0;
     private int[] questList; // shuffled list of treasures id
 
@@ -165,7 +165,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 y = (int) boardPanel.getY();
         int     width = movePanel.getWidth(),
                 height = movePanel.getY() - y;
-        scoreboardPanel = new ScoreboardPanel(x, y, width, height);
+        scoreboardPanel = new ScoreboardPanel(x, y, width, height, players);
         add(scoreboardPanel);
     }
 

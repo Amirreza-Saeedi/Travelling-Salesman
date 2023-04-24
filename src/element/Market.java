@@ -151,7 +151,7 @@ public class Market extends Element {
                 if (weapons[i].price > player.getCoin())
                     weaponsButtons[i].setEnabled(false);
             }
-            if (treasure.getValue() > player.getCoin()) // treasure
+            if (treasure == null || treasure.getValue() > player.getCoin()) // treasure
                 treasureButton.setEnabled(false);
 
         }

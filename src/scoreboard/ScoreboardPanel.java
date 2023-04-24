@@ -1,5 +1,7 @@
 package scoreboard;
 
+import element.Player;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -15,10 +17,17 @@ public class ScoreboardPanel extends JPanel {
     private String minuteString = String.format("%02d", minute);;
     private JLabel timerLabel = new JLabel();
     public Quest quest;
+    private Player[] players;
+    private JLabel[] playersLabels;
+    private JLabel[] treasureLabels;
+    private JLabel[] powerLabels;
+    private JLabel[] coinLabels;
+
+    private int unit;
 
     private Timer timer = new Timer(1000, new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) { // update elapsed time
             elapsedTime += 1000;
             second = elapsedTime / 1000 % 60;
             minute = elapsedTime / 60000;
@@ -28,23 +37,97 @@ public class ScoreboardPanel extends JPanel {
         }
     });
 
-    public ScoreboardPanel(int x, int y, int width, int height) {
+    public ScoreboardPanel(int x, int y, int width, int height, Player[] players) {
         setBounds(x, y, width, height);
         setBorder(new LineBorder(Color.BLACK, 2));
         setBackground(Color.WHITE);
         setLayout(null);
+        setOpaque(true);
         VERTICAL_UNIT = height / 10;
 
         newTimer();
         newQuest();
+        newPlayers(players);
 
     }
 
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setStroke(new BasicStroke(1));
+        g2.setColor(Color.BLACK);
+        int y0 = quest.label.getY() + quest.label.getHeight();
+        for (int i = 0; i < players.length - 1; i++) { // divider line
+            int y = y0 + (i + 1) * unit;
+            g2.drawLine(0, y, getWidth(), y);
+        }
+    }
+
+//    public void updateState()
+
+    private void newPlayers(Player[] players) {
+        // init
+        this.players = players;
+        playersLabels = new JLabel[players.length];
+        treasureLabels = new JLabel[players.length];
+        powerLabels = new JLabel[players.length];
+        coinLabels = new JLabel[players.length];
+
+        int y0 = quest.label.getY() + quest.label.getHeight();
+        int mainHeight = getHeight() - y0; // height of players panel
+        unit = mainHeight / players.length; // distance between each two players
+
+        for (int i = 0; i < players.length; i++) { // players info
+            // player name & logo
+            Player player = players[i];
+            JLabel playerLabel = new JLabel(" " + player.getTitle());
+            int size = 20;
+            playerLabel.setFont(new Font("Ink free", Font.BOLD, size));
+            playerLabel.setBounds(20, unit * i + y0 + 5, getWidth(), size);
+            playerLabel.setOpaque(true);
+            playerLabel.setBackground(player.getColor());
+            add(playerLabel);
+            playersLabels[i] = playerLabel; // init
+
+            int vSpace = 10;
+            int y1 = playerLabel.getY() + playerLabel.getHeight() + vSpace;
+            int hSpace = 5;
+            int x1 = playerLabel.getX() + 20;
+            int vSize = size;
+            int hSize = vSize * 4;
+
+            // treasure
+            JLabel treasureLabel = new JLabel("T:" + player.nTreasures);
+            treasureLabel.setBounds(x1, y1, hSize, vSize);
+            treasureLabel.setFont(new Font("", Font.PLAIN, vSize));
+            treasureLabel.setOpaque(true);
+            treasureLabel.setBackground(new Color(0x30000000, true));
+            treasureLabel.setToolTipText("Treasures");
+            add(treasureLabel);
+            treasureLabels[i] = treasureLabel; // init
+            // power
+            JLabel powerLabel = new JLabel("P:" + player.getPower());
+            powerLabel.setBounds(treasureLabel.getX() + treasureLabel.getWidth() + hSpace, y1, hSize, vSize);
+            powerLabel.setFont(new Font("", Font.PLAIN, vSize));
+            powerLabel.setOpaque(true);
+            powerLabel.setBackground(new Color(0x30000000, true));
+            powerLabel.setToolTipText("Power");
+            add(powerLabel);
+            powerLabels[i] = powerLabel; // init
+            // coin
+            JLabel coinLabel = new JLabel("C:" + player.getCoin());
+            coinLabel.setBounds(powerLabel.getX() + powerLabel.getWidth() + hSpace, y1, hSize, vSize);
+            coinLabel.setFont(new Font("", Font.PLAIN, vSize));
+            coinLabel.setOpaque(true);
+            coinLabel.setBackground(new Color(0x30000000, true));
+            coinLabel.setToolTipText("Coins");
+            add(coinLabel);
+            coinLabels[i] = coinLabel; // init
+        }
+    }
+
     private void newTimer() {
-//        int width = this.getWidth() / 2;
-//        int height = 40;
-//        int x = this.getWidth() / 2 - width / 2;
-//        int y = 5;
         timerLabel.setBounds(0, 0, this.getWidth(), VERTICAL_UNIT);
         timerLabel.setText(minuteString + ":" + secondString);
         timerLabel.setFont(new Font("", Font.PLAIN, VERTICAL_UNIT));

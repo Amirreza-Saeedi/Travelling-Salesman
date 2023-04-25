@@ -1,9 +1,6 @@
 package scoreboard;
 
-import element.Loot;
-import element.Player;
-import element.Trap;
-import element.Treasure;
+import element.*;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -82,6 +79,30 @@ public class ScoreboardPanel extends JPanel {
                 remove(label);
             }
         }
+    }
+
+    public void updateState(Weapon weapon, int playerID) {
+//        removeLastChanges();
+//        Player player = players[playerID];
+//
+//        // update current value X2
+//        JLabel treasureLabel = treasureLabels[playerID];
+//        treasureLabel.setText("T:" + player.nTreasures);
+//        JLabel coinLabel = coinLabels[playerID];
+//        coinLabel.setText(("C:" + player.getCoin()));
+//
+//        // show applied changes X2
+//        JLabel tChangesLabel = newChangeLabel(treasureLabel, String.format("%+d", 1), Color.GREEN);
+//        JLabel cChangesLabel = newChangeLabel(coinLabel, String.format("%+d", treasure.getValue()), Color.GREEN);
+//
+//        // add to changesLabels
+//        int i = 0;
+//        changesLabels = new JLabel[2];
+//        changesLabels[i++] = tChangesLabel;
+//        changesLabels[i++] = cChangesLabel;
+//        for (JLabel label : changesLabels) { // add to panel
+//            add(label);
+//        }
     }
 
     public void updateState(Treasure treasure, int playerID) { // called by applyTreasure

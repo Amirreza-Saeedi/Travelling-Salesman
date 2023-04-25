@@ -859,16 +859,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // market panel
         if (marketPanel != null && marketPanel.isRunning()) {
             System.out.println("GamePanel.actionPerformed");
-            if (e.getSource() == marketPanel.weaponsButtons[0]) { // btn 1
-                marketPanel.buyWeapon(marketPanel.weapons[0]);
-                marketPanel.returnButton.doClick();
-            } else if (e.getSource() == marketPanel.weaponsButtons[1]) { // btn 2
-                marketPanel.buyWeapon(marketPanel.weapons[1]);
-                marketPanel.returnButton.doClick();
-            } else if (e.getSource() == marketPanel.weaponsButtons[2]) { // btn 3
-                marketPanel.buyWeapon(marketPanel.weapons[2]);
-                marketPanel.returnButton.doClick();
-            } else if (e.getSource() == marketPanel.treasureButton) { // btn 4
+            for (int i = 0; i < marketPanel.weaponsButtons.length; i++) { // btn 1, 2, 3
+                if (e.getSource() == marketPanel.weaponsButtons[i]) {
+                    marketPanel.buyWeapon(marketPanel.weapons[i]);
+                    scoreboardPanel.updateState(marketPanel.weapons[i], players[turn].getId());
+                    break;
+                }
+            }
+            if (e.getSource() == marketPanel.treasureButton) { // btn 4
                 marketPanel.buyTreasure();
                 marketPanel.returnButton.doClick();
             } else if (e.getSource() == marketPanel.returnButton) { // ret btn

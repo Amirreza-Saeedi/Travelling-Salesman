@@ -16,13 +16,12 @@ public class Market extends Element {
         this.setColor(new Color(0xFFC002));
         newLabel(getTitle()); // create label
 
-
         setVisible(true);
     }
 
 
 
-    public static class MarketPanel extends JPanel implements ActionListener, KeyListener {
+    public static class MarketPanel extends JPanel {
         static int treasurePrice = 500;
         private boolean running = true;
         JLabel titleLabel = new JLabel("Today Offers:", SwingConstants.LEFT);
@@ -44,13 +43,11 @@ public class Market extends Element {
             setBackground(Color.WHITE);
             setBorder(new EtchedBorder(EtchedBorder.RAISED, Color.BLACK, Color.BLACK));
             setFocusable(true);
-//            addKeyListener(this);
             setToolTipText("");
 
             this.treasure = treasure;
             this.player = player;
             newComponents();
-
         }
 
 
@@ -89,7 +86,6 @@ public class Market extends Element {
                 button.setLocation(25 + 70 * i, getHeight() - 50);
                 button.setSize(50, 30);
                 button.setFocusable(false);
-//                button.addActionListener(this);
                 if (player.getCoin() < weapon.price) // if money is not enough
                     button.setEnabled(false);
                 add(button);
@@ -106,7 +102,6 @@ public class Market extends Element {
                 treasureButton.setText((i + 1) + "");
                 treasureButton.setBounds(button.getX() + 70, button.getY(), button.getWidth(), button.getHeight());
                 treasureButton.setFocusable(false);
-//                treasureButton.addActionListener(this);
                 if (player.getCoin() < treasurePrice) // if money is not enough
                     treasureButton.setEnabled(false);
                 add(treasureButton);
@@ -120,7 +115,6 @@ public class Market extends Element {
 
             returnButton.setBounds(button.getX() + 70, button.getY(), button.getWidth() + 20, button.getHeight());
             returnButton.setText("ESC");
-            returnButton.addActionListener(this);
             returnButton.setFocusable(false);
             add(returnButton);
         }
@@ -135,6 +129,8 @@ public class Market extends Element {
             player.buyWeapon(weapon);
             this.weaponDialog(weapon);
             checkButtons();
+
+
         }
 
         public void buyTreasure() {
@@ -164,49 +160,6 @@ public class Market extends Element {
             running = b;
         }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-//            if (e.getSource() == weaponsButtons[0]) { // btn 1
-//                buyWeapon(weapons[0]);
-//                returnButton.doClick();
-//            } else if (e.getSource() == weapons[1]) { // btn 2
-//                buyWeapon(weapons[1]);
-//                returnButton.doClick();
-//            } else if (e.getSource() == weapons[2]) { // btn 3
-//                buyWeapon(weapons[2]);
-//                returnButton.doClick();
-//            } else if (e.getSource() == treasureButton) { // btn 4
-//                buyTreasure();
-//                returnButton.doClick();
-//            } else if (e.getSource() == returnButton) { // ret btn
-//                System.err.println("RETURN");
-//            }
-        }
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-//            if (e.getKeyCode() == '1') { // btn 1
-//                weaponsButtons[0].doClick();
-//            } else if (e.getKeyCode() == '2') { // btn 2
-//                weaponsButtons[1].doClick();
-//            } else if (e.getKeyCode() == 3) { // btn 3
-//                weaponsButtons[2].doClick();
-//            } else if (e.getKeyCode() == '3') { // btn 4
-//                treasureButton.doClick();
-//            } else if (e.getKeyCode() == 27) {
-//                returnButton.doClick();
-//            }
-        }
     }
 }
 

@@ -108,30 +108,46 @@ public class ScoreboardPanel extends JPanel {
         }
     }
     public void updateState(Loot loot, int playerID) {
-//        removeLastChanges();
-//        Player player = players[playerID];
-//
-//        // update current value X2
-//        JLabel treasureLabel = treasureLabels[playerID];
-//        treasureLabel.setText("T:" + player.nTreasures);
-//        JLabel coinLabel = coinLabels[playerID];
-//        coinLabel.setText(("C:" + player.getCoin()));
-//
-//        // show applied changes X2
-//        JLabel tChangesLabel = newChangeLabel(treasureLabel, String.format("%+d", treasure.getValue()), Color.GREEN);
-//        JLabel cChangesLabel = newChangeLabel(coinLabel, String.format("%d", treasure.getValue()), Color.GREEN);
-//
-//        // add to changesLabels
-//        int i = 0;
-//        changesLabels = new JLabel[2];
-//        changesLabels[i++] = tChangesLabel;
-//        changesLabels[i++] = cChangesLabel;
-//        for (JLabel label : changesLabels) { // add to panel
-//            add(label);
-//        }
-    }
-    public void updateState(Trap trap) {
+        removeLastChanges();
+        Player player = players[playerID];
 
+        // update current value X1
+        JLabel coinLabel = coinLabels[playerID];
+        coinLabel.setText(("C:" + player.getCoin()));
+
+        // show applied changes X1
+        JLabel cChangesLabel = newChangeLabel(coinLabel, String.format("%+d", loot.getValue()), Color.GREEN);
+
+        // add to changesLabels
+        int i = 0;
+        changesLabels = new JLabel[1];
+        changesLabels[i++] = cChangesLabel;
+        for (JLabel label : changesLabels) { // add to panel
+            add(label);
+        }
+    }
+    public void updateState(Trap trap, int playerID) {
+        removeLastChanges();
+        Player player = players[playerID];
+
+        // update current value X2
+        JLabel powerLabel = powerLabels[playerID];
+        powerLabel.setText("P:" + player.getPower());
+        JLabel coinLabel = coinLabels[playerID];
+        coinLabel.setText(("C:" + player.getCoin()));
+
+        // show applied changes X2
+        JLabel pChangesLabel = newChangeLabel(powerLabel, String.format("%+d", -trap.getPhysicalDamage()), Color.RED);
+        JLabel cChangesLabel = newChangeLabel(coinLabel, String.format("%+d", -trap.getPhysicalDamage()), Color.RED);
+
+        // add to changesLabels
+        int i = 0;
+        changesLabels = new JLabel[2];
+        changesLabels[i++] = pChangesLabel;
+        changesLabels[i++] = cChangesLabel;
+        for (JLabel label : changesLabels) { // add to panel
+            add(label);
+        }
     }
 
 

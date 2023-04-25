@@ -692,17 +692,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         Trap trap = (Trap) findElement(new Trap(), player._x, player._y);
 
-        if (trap != null) {
+        if (trap != null) { // todo what?
             trap.setVisible(true);
             player.applyTrap(trap);
             player.locatedTraps[trap.getId()] = true;
+            scoreboardPanel.updateState(trap, player.getId());
+
             repaint();
+
             JOptionPane.showMessageDialog(this,
                     String.format("Trap triggered!\n%d coins lost,\n and %d damage taken.",
                             trap.getFinancialDamage(), trap.getPhysicalDamage()),
                     trap.getTitle(),
                     JOptionPane.INFORMATION_MESSAGE);
             trap.setVisible(false);
+
         } else {
             System.err.println("GamePanel.applyTrap\nnull");
         }
@@ -757,23 +761,25 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     void applyLoot() {
         System.out.println("main.GamePanel.applyLoot");
         Player player = players[turn];
-
         Loot loot = (Loot) findElement(new Loot(), player._x, player._y);
 
         if (loot != null) {
             if (!loot.isLooted()) { // if it is not empty
-                boardPanel.board[player._x][player._y] = GameConstants.EMPTY; // free the house
-
                 loot.setVisible(true);
-                repaint();
                 loot.setLooted(true); // todo why doesn't work?
                 player.applyLoot(loot);
+                boardPanel.board[player._x][player._y] = GameConstants.EMPTY; // free the house
+                scoreboardPanel.updateState(loot, player.getId());
+
+                repaint();
+
                 JOptionPane.showMessageDialog(this,
                         String.format("Loot founded! %d coins gained.", loot.getValue()),
                         loot.getTitle(),
                         JOptionPane.INFORMATION_MESSAGE);
                 loot.setVisible(false);
             }
+
         } else {
             System.err.println("GamePanel.applyLoot\nnull");
         }

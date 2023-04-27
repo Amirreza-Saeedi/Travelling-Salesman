@@ -5,7 +5,7 @@ import java.awt.*;
 public class Weapon { // low damage = 25, medium = 50, high = 100
     /*        todo easy means sells all models any time
      *          medium 2 models and hard 1 model randomly*/
-    static Weapon[] weapons = {new Weapon(20, 40, "Knife"),
+    static final Weapon[] weapons = {new Weapon(20, 40, "Knife"),
                                 new Weapon(50, 100, "Axe"),
                                 new Weapon(100, 180, "Hammer")};
     int power;
@@ -16,6 +16,22 @@ public class Weapon { // low damage = 25, medium = 50, high = 100
         this.power = power;
         this.price = price;
         this.title = title;
+    }
+
+    public int getPower() {
+        return power;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
 

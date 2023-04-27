@@ -4,8 +4,6 @@ import java.awt.*;
 
 import main.*;
 
-import javax.swing.*;
-
 
 public class Player extends Element { // todo extend or not?
     private static final int INITIAL_POWER = 50;
@@ -15,10 +13,10 @@ public class Player extends Element { // todo extend or not?
     public boolean[] locatedTraps; // determine located traps
     private int power;
     private int coin;
-    public int nTreasures;
-    public int nLocatedTreasure;
-    private int nTraps;
-    private int nLoots;
+    private int numberOfTreasures;
+    private int numberOfLocatedTreasure;
+    private int numberOfTraps;
+    private int numberOfLoots;
     private StartHouse startHouse; // todo create an array for randomizing
 
     private static final Color[] colors = { // todo football team icons
@@ -180,41 +178,51 @@ public class Player extends Element { // todo extend or not?
     public void applyLoot(Loot loot) {
         System.out.println("Player.applyLoot");
         gainCoin(loot.value);
-        nLoots++;
+        numberOfLoots++;
     }
 
     public void applyTrap(Trap trap) {
         System.out.println("Player.applyTrap");
+        System.out.println(trap);
         loseCoin(trap.financialDamage);
         losePower(trap.physicalDamage);
         if (power == 0) { // if got killed
             revive(this);
         }
-        nTraps++;
+        numberOfTraps++;
     }
 
     public void applyTreasure(Treasure treasure) {
 
         System.out.println("Player.applyTreasure");
+        System.out.println(treasure);
         gainCoin(treasure.getValue());
         this.lootedTreasures[treasure.getId()] = true;
-        nTreasures++;
-        System.out.println(this);
-        System.out.println();
+        numberOfTreasures++;
     }
 
     public void buyWeapon(Weapon weapon) {
         System.out.println("Player.applyWeapon");
-        System.out.println();
+        System.out.println(weapon);
         loseCoin(weapon.price);
         gainPower(weapon.power);
-        System.out.println(this);
-        System.out.println();
     }
 
     public void buyTreasureMap(Treasure treasure, int price) {
         loseCoin(price);
         this.locatedTreasures[treasure.getId()] = true;
+    }
+
+    public int getNumberOfTreasures() {
+        return numberOfTreasures;
+    }
+
+    public int getNumberOfTraps() {
+        return numberOfTraps;
+    }
+
+    public int getNumberOfLoots() {
+        return numberOfLoots;
     }
 
     @Override

@@ -2,6 +2,7 @@ package element;
 
 import java.awt.*;
 
+import com.sun.org.apache.bcel.internal.generic.ARETURN;
 import main.*;
 
 
@@ -18,7 +19,7 @@ public class Player extends Element { // todo extend or not?
     private int numberOfTraps;
     private int numberOfLoots;
     private StartHouse startHouse; // todo create an array for randomizing
-
+    private boolean isTurn = false;
     private static final Color[] colors = { // todo football team icons
             new Color(0xE00000),
             new Color(0xFF0041D3, true)
@@ -223,6 +224,18 @@ public class Player extends Element { // todo extend or not?
 
     public int getNumberOfLoots() {
         return numberOfLoots;
+    }
+
+    public boolean isTurn() {
+        return isTurn;
+    }
+
+    public void toggleTurn() {
+        isTurn = !isTurn;
+    }
+
+    public void setTurn(boolean turn) {
+        isTurn = turn;
     }
 
     @Override

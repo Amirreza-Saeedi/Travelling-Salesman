@@ -472,6 +472,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             String title = "Player " + (i + 1);
             players[i] = new Player(startHouse, i, title);
         }
+
+        players[turn].setTurn(true);
     }
 
     private void newQuest() {
@@ -794,8 +796,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         return false;
     }
 
-    void nextPlayer() { // make things ready for next player
+    void nextPlayer() { // called after complete moves or wrong moves
+        /* make things ready for next player.*/
+        players[turn].toggleTurn(); // set off previous
         turn = (turn + 1) % NUMBER_OF_PLAYERS;
+        players[turn].toggleTurn(); // set on current
+
         diceNumber = 0;
         nTrace = 0;
         diceButton.setEnabled(true);
@@ -846,7 +852,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
 
-    void moveListener() { // things to do after each move
+    private void moveListener() { // things to do after each move
         diceNumber--;
         nTrace++;
         if (diceNumber == 0) { // trigger at the end of the move

@@ -634,9 +634,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         for (int i = turn, j = 0; j < NUMBER_OF_PLAYERS - 1; ++i, ++j) { // first check for fight
             int nxtTurn = (i + 1) % NUMBER_OF_PLAYERS;
             if (curPlayer._x == players[nxtTurn]._x && curPlayer._y == players[nxtTurn]._y) {
-                if (!applyFight(players[nxtTurn])) // fight then if lose don't check houses for him
+                boolean result = applyFight(players[nxtTurn]); // fight
+                scoreboardPanel.updateState();
+                if (!result) { // if lost don't check houses for him
                     return;
-
+                }
             }
         }
 
@@ -658,7 +660,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 applyMarket();
                 break;
         }
-
+        scoreboardPanel.updateState();
 
 
     }

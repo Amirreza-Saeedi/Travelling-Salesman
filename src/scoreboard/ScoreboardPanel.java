@@ -231,9 +231,6 @@ public class ScoreboardPanel extends JPanel {
         updateState(0, -trap.getPhysicalDamage(), -trap.getFinancialDamage(), playerID, 0);
     }
 
-    public void updateState(Weapon weapon, int playerID) { // todo
-        updateState(0, weapon.getPower(), -weapon.getPrice(), playerID, 0);
-    }
 
 //    public void updateState(TreasureMap treasureMap, int playerID) {
 //        int treasures[] =

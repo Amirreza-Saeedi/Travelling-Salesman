@@ -81,7 +81,7 @@ public class Player extends Element { // todo extend or not?
         System.out.println("loser = " + loser);
 
         // coin changes
-        int coin = (int) (((double) winner.power - loser.power) / (winner.power + loser.power) * loser.coin);
+        int coin = (int) ((((double) winner.power - loser.power) / (winner.power + loser.power)) * loser.coin);
         System.out.println("coin = " + coin);
         winner.coin += coin;
         loser.coin -= coin;

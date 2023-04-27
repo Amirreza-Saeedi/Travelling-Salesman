@@ -20,6 +20,7 @@ public class Quest {
             this.id = -1;
             this.title = "";
             label.setText("Quest: " + title);
+            return;
         }
         this.id = treasure.getId();
         this.title = treasure.getTitle();

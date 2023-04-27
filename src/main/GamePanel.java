@@ -660,7 +660,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 applyMarket();
                 break;
         }
-        scoreboardPanel.updateState();
 
 
     }
@@ -698,7 +697,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             trap.setVisible(true);
             player.applyTrap(trap);
             player.locatedTraps[trap.getId()] = true;
-            scoreboardPanel.updateState(trap, player.getId());
+            scoreboardPanel.updateState();
 
             repaint();
 
@@ -724,7 +723,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             player.applyTreasure(treasure);
             treasure.setLooted(true);
             boardPanel.board[treasure._x][treasure._y] = GameConstants.EMPTY; // clear the house
-            scoreboardPanel.updateState(treasure, player.getId()); // update scoreboard
+            scoreboardPanel.updateState(); // update scoreboard
 
             repaint(); // todo cross the treasure image
 //            todo send it from board to scoreboard
@@ -771,7 +770,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 loot.setLooted(true); // todo why doesn't work?
                 player.applyLoot(loot);
                 boardPanel.board[player._x][player._y] = GameConstants.EMPTY; // free the house
-                scoreboardPanel.updateState(loot, player.getId());
+                scoreboardPanel.updateState();
 
                 repaint();
 
@@ -864,12 +863,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             for (int i = 0; i < marketPanel.weaponsButtons.length; i++) { // btn 1, 2, 3
                 if (e.getSource() == marketPanel.weaponsButtons[i]) {
                     marketPanel.buyWeapon(marketPanel.weapons[i]);
-                    scoreboardPanel.updateState(marketPanel.weapons[i], players[turn].getId());
-                    break;
+                    scoreboardPanel.updateState();
+                    marketPanel.returnButton.doClick();
                 }
             }
             if (e.getSource() == marketPanel.treasureButton) { // btn 4
                 marketPanel.buyTreasure();
+                scoreboardPanel.updateState();
                 marketPanel.returnButton.doClick();
             } else if (e.getSource() == marketPanel.returnButton) { // ret btn
                 marketPanel.returnToGame();

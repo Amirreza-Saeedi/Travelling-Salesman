@@ -29,5 +29,11 @@ public class GameConstants {
     public static final int PLAYER_1 = 0;
     public static final int PLAYER_2 = 1;
 
+    // player states
+    public static final byte CONTINUE = 0;
+    public static final byte WON = 1;
+    public static final byte DRAWN = 2;
+    public static final byte LOST = 3;
+
 
 }

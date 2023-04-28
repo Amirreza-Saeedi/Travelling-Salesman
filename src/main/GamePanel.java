@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.util.Random;
 
 import static java.lang.Math.ceil;
+import static java.lang.Math.max;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
     //screen and map sizes
@@ -64,7 +65,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private DiceMap diceMap;
     private JButton diceButton;
-    private int diceNumber;
+    private byte diceNumber;
 
     private MovePanel movePanel;
     private Trace[] traces;
@@ -75,18 +76,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private int[] questList; // shuffled list of treasures id
 
 
-  /*  enum Turn {
-        PLAYER_1,
-        PLAYER_2;
-    };*/
-
     enum Status {
-        PLAYER_1_WON,
-        PLAYER_2_WON,
-        DRAW, // TODO draw?
-        PLAYING;
+        END,
+        CONTINUE;
 
     };
+    Status status = Status.CONTINUE;
+    private boolean isEnded = false;
 
 
     public GamePanel() {
@@ -733,7 +729,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             JOptionPane.showMessageDialog(this,
                     String.format("%s delivered. %d coins earned.", treasure.getTitle(), treasure.getValue()),
                     "Castle", JOptionPane.INFORMATION_MESSAGE);
+
             nextQuest(); // start next quest
+            checkGameStatus(); // check if game ended
 
         } else {
             JOptionPane.showMessageDialog(this,
@@ -810,9 +808,86 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     }
 
-    void checkGameStatus() { // todo check if current player has won
+    void checkGameStatus() { // called by apply treasure
+        /* declare whether a player has won, lost, drawn
+        * or should continue*/
+        System.out.println("GamePanel.checkGameStatus");
+        final int maxTreasures = getMaxTreasures();
+        System.out.println("maxTreasures = " + maxTreasures);
+        final int nRemainingTreasures = getNRemainingTreasures();
+        System.out.println("nRemainingTreasures = " + nRemainingTreasures);
 
+        // set losers
+        System.out.println("looser loop:");
+        for (Player player : players) {
+            if (player.getNumberOfTreasures() + nRemainingTreasures < maxTreasures) {
+                player.setState(GameConstants.LOST);
+            }
+            System.out.println("player.getTitle() = " + player.getTitle());
+            System.out.println("player.getState() = " + player.getState());
+        }
 
+        // set winner
+        if (getNAlivePlayers() == 1) {
+            System.out.println("winner loop:");
+            for (Player player : players) {
+                if (player.isPlaying()) {
+                    player.setState(GameConstants.WON);
+                    JOptionPane.showMessageDialog(this, "Player '" + player.getTitle() + "' won!");
+                }
+                System.out.println("player.getTitle() = " + player.getTitle());
+                System.out.println("player.getState() = " + player.getState());
+            }
+            isEnded = true;
+        }
+
+        // set tie
+        if (nRemainingTreasures == 0) {
+            System.out.println("drawer loop");
+            for (Player player : players) {
+                if (player.isPlaying()) {
+                    player.setState(GameConstants.DRAWN);
+                }
+                System.out.println("player.getTitle() = " + player.getTitle());
+                System.out.println("player.getState() = " + player.getState());
+            }
+            isEnded = true;
+            JOptionPane.showMessageDialog(this, "Draw!");
+        }
+    }
+
+    private int getNRemainingTreasures() { // todo or loop through array
+//        System.out.println("GamePanel.getNRemainingTreasures");
+//        System.out.println("NUMBER_OF_TREASURES = " + NUMBER_OF_TREASURES);
+//        System.out.println("curQuest = " + curQuest);
+//        return NUMBER_OF_TREASURES - curQuest;
+        System.out.println("GamePanel.getNRemainingTreasures");
+        int n = 0;
+        for (Treasure treasure : treasures) {
+            if (!treasure.isLooted())
+                n++;
+        }
+        System.out.println("n = " + n);
+        return n;
+    }
+
+    private int getMaxTreasures() {
+        int max = 0;
+        for (Player player : players) {
+            if (max < player.getNumberOfTreasures())
+                max = player.getNumberOfTreasures();
+        }
+        return max;
+    }
+
+    private int getNAlivePlayers() {
+        int n = 0;
+        for (Player player : players) {
+            if (player.isPlaying()) {
+                n++;
+            }
+        }
+        return n;
     }
 
     private Element findElement(Element element, int x, int y) {
@@ -894,7 +969,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
             // dice:
             if (e.getSource() == diceButton) {
-                diceNumber = diceMap.throwDice();
+                diceNumber = (byte) diceMap.throwDice();
                 diceButton.setEnabled(false);
                 repaint();
             }

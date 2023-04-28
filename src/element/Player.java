@@ -2,7 +2,7 @@ package element;
 
 import java.awt.*;
 
-import com.sun.org.apache.bcel.internal.generic.ARETURN;
+import consts.GameConstants;
 import main.*;
 
 
@@ -20,6 +20,8 @@ public class Player extends Element { // todo extend or not?
     private int numberOfLoots;
     private StartHouse startHouse; // todo create an array for randomizing
     private boolean isTurn = false;
+    private byte state = GameConstants.CONTINUE; // won, drawn, lost, continue
+
     private static final Color[] colors = { // todo football team icons
             new Color(0xE00000),
             new Color(0xFF0041D3, true)
@@ -236,6 +238,18 @@ public class Player extends Element { // todo extend or not?
 
     public void setTurn(boolean turn) {
         isTurn = turn;
+    }
+
+    public byte getState() {
+        return state;
+    }
+
+    public void setState(byte state) {
+        this.state = state;
+    }
+
+    public boolean isPlaying() { // if player hasn't lost
+        return state != GameConstants.LOST;
     }
 
     @Override

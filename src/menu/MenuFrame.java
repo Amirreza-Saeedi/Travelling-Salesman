@@ -8,7 +8,7 @@ public class MenuFrame extends JFrame implements WindowListener {
 
     public MenuFrame() {
         super();
-        MenuPanel menuPanel = new MenuPanel();
+        MenuPanel menuPanel = new MenuPanel(this);
         add(menuPanel);
         setVisible(true);
         pack();

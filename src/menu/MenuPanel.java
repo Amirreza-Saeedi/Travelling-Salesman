@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuPanel extends JPanel implements ActionListener {
+    private final JFrame frame;
     private final int PANEL_HEIGHT = 500;
     private final int PANEL_WIDTH = 400;
     JLabel travellingLabel = new JLabel("Travelling");
@@ -16,13 +17,15 @@ public class MenuPanel extends JPanel implements ActionListener {
     JButton helpButton = new JButton("Help");
     JButton exitButton = new JButton("Exit");
     JButton[] buttons = {newGameButton, settingButton, helpButton, exitButton};
-    MenuPanel() {
+    MenuPanel(JFrame frame) {
         super();
         setLayout(null);
         setBackground(new Color(0xF8D980));
         setForeground(Color.BLACK);
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+        this.frame = frame;
+
         int xCenter = getWidth() / 2;
 
         // title labels
@@ -48,45 +51,23 @@ public class MenuPanel extends JPanel implements ActionListener {
         int xButton = xCenter - buttonDimension.width / 2;
         int vSpace = buttonDimension.height + 10;
 
-        for (int j = 0; j < buttons.length; j++) {
-            buttons[j].setSize(buttonDimension);
-            buttons[j].setLocation(xButton, j * vSpace + y0);
-            buttons[j].addActionListener(this);
-            buttons[j].setFont(buttonFont);
-            buttons[j].setBorder(new EtchedBorder());
-            add(buttons[j]);
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setSize(buttonDimension);
+            buttons[i].setLocation(xButton, i * vSpace + y0);
+            buttons[i].addActionListener(this);
+            buttons[i].setFont(buttonFont);
+            buttons[i].setBorder(new EtchedBorder());
+            add(buttons[i]);
         }
-//        newGameButton.setSize(buttonDimension);
-//        newGameButton.setLocation(xButton, i++ * vSpace + y0);
-//        newGameButton.addActionListener(this);
-//        newGameButton.setFont(buttonFont);
-//        add(newGameButton);
-//
-//        settingButton.setSize(buttonDimension);
-//        settingButton.setLocation(xButton, i++ * vSpace + y0);
-//        settingButton.addActionListener(this);
-//        settingButton.setFont(buttonFont);
-//        add(settingButton);
-//
-//        helpButton.setSize(buttonDimension);
-//        helpButton.setLocation(xButton, i++ * vSpace + y0);
-//        helpButton.addActionListener(this);
-//        helpButton.setFont(buttonFont);
-//        add(helpButton);
-//
-//        exitButton.setSize(buttonDimension);
-//        exitButton.setLocation(xButton, i++ * vSpace + y0);
-//        exitButton.addActionListener(this);
-//        exitButton.setFont(buttonFont);
-//        add(exitButton);
 
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == newGameButton) {
-
+            
         } else if (e.getSource() == settingButton) {
+            new SettingDialog(frame);
 
         } else if (e.getSource() == helpButton) {
 

@@ -1,5 +1,8 @@
 package menu;
 
+import main.GameFrame;
+import main.GamePanel;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
@@ -65,7 +68,8 @@ public class MenuPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == newGameButton) {
-            
+            new GameFrame();
+
         } else if (e.getSource() == settingButton) {
             new SettingDialog(frame);
 

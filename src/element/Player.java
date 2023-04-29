@@ -23,8 +23,10 @@ public class Player extends Element { // todo extend or not?
     private byte state = GameConstants.CONTINUE; // won, drawn, lost, continue
 
     private static final Color[] colors = { // todo football team icons
-            new Color(0xE00000),
-            new Color(0xFF0041D3, true)
+            new Color(0xC50000),
+            new Color(0x003AC0),
+            new Color(0xB2B200),
+            new Color(0x009A00)
     };
 
     public Player(int x, int y, int width, int height, int id, int _x, int _y, String title) {

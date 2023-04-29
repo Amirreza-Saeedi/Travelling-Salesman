@@ -3,6 +3,7 @@ package main;
 import consts.GameConstants;
 import element.*;
 import scoreboard.ScoreboardPanel;
+import menu.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,8 +29,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public final int UNIT_SIZE;
 
     // elements (amounts, units ...)
-    static final int BOARD_UNITS = 10;
-    private static final int NUMBER_OF_UNITS = BOARD_UNITS * BOARD_UNITS;
+    private static final int NUMBER_OF_UNITS = Setting.getInstance().getBoardSize() * Setting.getInstance().getBoardSize();
     private static final double RATIO_OF_MARKETS_TO_UNITS = 5.0 / (10 * 10);
     public static final int NUMBER_OF_MARKETS = (int) (NUMBER_OF_UNITS * RATIO_OF_MARKETS_TO_UNITS);
     private static final double RATIO_OF_LOOTS_TO_UNITS = 13.0 / (10 * 10);
@@ -41,12 +41,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private static final double RATIO_OF_TRAPS_TO_UNITS = 5.0 / (10 * 10); // TODO add difficulty condition
     public static final int NUMBER_OF_TRAPS = (int) (NUMBER_OF_UNITS * RATIO_OF_TRAPS_TO_UNITS);
 
-    // players
-    public final int NUMBER_OF_PLAYERS = 2; // TODO add other modes
-
 
     // TODO difficulty
-    public static int difficulty;
+//    public static int difficulty;
 
     //    JPanel mapPanel; // TODO convert mapRect to panel?
     ScoreboardPanel scoreboardPanel;
@@ -75,6 +72,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private int curQuest = 0;
     private int[] questList; // shuffled list of treasures id
 
+    Setting setting = Setting.getInstance();
+
 
     enum Status {
         END,
@@ -96,7 +95,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         // game settings
         this.turn = GameConstants.PLAYER_1;
-        this.difficulty = GameConstants.MEDIUM;
+//        this.difficulty = GameConstants.MEDIUM;
 
         // add board panel to the center
         newBoard();
@@ -120,7 +119,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     public void newBoard() { // panel at center
         int deltaWidth = FRAME_WIDTH - MAP_WIDTH;
-        boardPanel = new BoardMap(deltaWidth / 2, 0, MAP_WIDTH, MAP_HEIGHT, BOARD_UNITS);
+        boardPanel = new BoardMap(deltaWidth / 2, 0, MAP_WIDTH, MAP_HEIGHT, setting.getBoardSize());
     }
 
     void newDice() { // panel at lower-left
@@ -238,12 +237,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void drawTraps(Graphics g) {
-        if (difficulty == GameConstants.MEDIUM || difficulty == GameConstants.HARD) { // show temporarily
+        if (setting.getDifficulty() == GameConstants.MEDIUM || setting.getDifficulty() == GameConstants.HARD) { // show temporarily
             for (Trap trap : traps) {
                 if (trap.isVisible())
                     trap.draw(g);
             }
-        } else if (difficulty == GameConstants.EASY) { // show permanently
+        } else if (setting.getDifficulty() == GameConstants.EASY) { // show permanently
             Player player = players[turn];
             for (int i = 0; i < NUMBER_OF_TRAPS; ++i) {
                 if (player.locatedTraps[i])
@@ -297,7 +296,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void newCastle() { // do center the castle on the board
-        int x = BOARD_UNITS / 2;
+        int x = setting.getBoardSize() / 2;
         int y = x;
 
         castle = new Castle(boardPanel.xAxis[x], boardPanel.yAxis[y], UNIT_SIZE, UNIT_SIZE);
@@ -349,8 +348,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         for (int i = 0; i < loots.length; i++) {
             do { // todo add a appropriate func
-                x = random.nextInt(BOARD_UNITS);
-                y = random.nextInt(BOARD_UNITS);
+                x = random.nextInt(setting.getBoardSize());
+                y = random.nextInt(setting.getBoardSize());
             } while (boardPanel.board[x][y] != GameConstants.EMPTY);
 
             int value = Loot.createValue();
@@ -370,8 +369,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         for (int i = 0; i < traps.length; i++) {
             do {
-                x = random.nextInt(BOARD_UNITS);
-                y = random.nextInt(BOARD_UNITS);
+                x = random.nextInt(setting.getBoardSize());
+                y = random.nextInt(setting.getBoardSize());
             } while (boardPanel.board[x][y] != GameConstants.EMPTY);
 
             int physicalDamage = Trap.createPhysicalDamage();
@@ -392,8 +391,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         for (int i = 0; i < walls.length; i++) {
             do {
-                x = random.nextInt(BOARD_UNITS);
-                y = random.nextInt(BOARD_UNITS);
+                x = random.nextInt(setting.getBoardSize());
+                y = random.nextInt(setting.getBoardSize());
             } while (boardPanel.board[x][y] != GameConstants.EMPTY);
 
             walls[i] = new Wall(boardPanel.xAxis[x], boardPanel.yAxis[y], UNIT_SIZE, UNIT_SIZE,
@@ -412,7 +411,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         boolean sw = true;
 
         while (sw) { // check if there is a Wall
-            house = random.nextInt(BOARD_UNITS);
+            house = random.nextInt(setting.getBoardSize());
 
             switch (side) { // determine the coordinate
                 case GameConstants.UP: // y = 0
@@ -425,22 +424,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     y = -1;
                     break;
                 case GameConstants.RIGHT: // x = max
-                    if (!isWall(BOARD_UNITS - 1, house, true)) {
+                    if (!isWall(setting.getBoardSize() - 1, house, true)) {
                         sw = false;
                     }
-                    point.x = boardPanel.xAxis[BOARD_UNITS - 1] + UNIT_SIZE;
+                    point.x = boardPanel.xAxis[setting.getBoardSize() - 1] + UNIT_SIZE;
                     point.y = boardPanel.yAxis[house];
-                    x = BOARD_UNITS;
+                    x = setting.getBoardSize();
                     y = house;
                     break;
                 case GameConstants.DOWN: // y = max
-                    if (!isWall(house, BOARD_UNITS - 1, true)) {
+                    if (!isWall(house, setting.getBoardSize() - 1, true)) {
                         sw = false;
                     }
                     point.x = boardPanel.xAxis[house];
-                    point.y = boardPanel.yAxis[BOARD_UNITS - 1] + UNIT_SIZE;
+                    point.y = boardPanel.yAxis[setting.getBoardSize() - 1] + UNIT_SIZE;
                     x = house;
-                    y = BOARD_UNITS;
+                    y = setting.getBoardSize();
                     break;
                 case GameConstants.LEFT: // x = 0
                     if (!isWall(0, house, true)) {
@@ -462,9 +461,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     void newPlayers() {
-        players = new Player[NUMBER_OF_PLAYERS];
+        players = new Player[setting.getNumberOfPlayers()];
 
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
+        for (int i = 0; i < setting.getNumberOfPlayers(); i++) {
             String title = "Player " + (i + 1);
             players[i] = new Player(startHouse, i, title);
         }
@@ -525,26 +524,26 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         switch (area % 4) {
             case 0:
                 do { // x1, y1 upper-left
-                    x = random.nextInt(BOARD_UNITS / 2);
-                    y = random.nextInt(BOARD_UNITS / 2);
+                    x = random.nextInt(setting.getBoardSize() / 2);
+                    y = random.nextInt(setting.getBoardSize() / 2);
                 } while (boardPanel.board[x][y] != GameConstants.EMPTY);
                 break;
             case 1:
                 do { // x1, y2 upper-right
-                    x = random.nextInt(BOARD_UNITS / 2);
-                    y = (int) (random.nextInt(BOARD_UNITS / 2) + ceil(BOARD_UNITS / 2.0));
+                    x = random.nextInt(setting.getBoardSize() / 2);
+                    y = (int) (random.nextInt(setting.getBoardSize() / 2) + ceil(setting.getBoardSize() / 2.0));
                 } while (boardPanel.board[x][y] != GameConstants.EMPTY);
                 break;
             case 2:
                 do { // x2, y1 lower-left
-                    x = (int) (random.nextInt(BOARD_UNITS / 2) + ceil(BOARD_UNITS / 2.0));
-                    y = random.nextInt(BOARD_UNITS / 2);
+                    x = (int) (random.nextInt(setting.getBoardSize() / 2) + ceil(setting.getBoardSize() / 2.0));
+                    y = random.nextInt(setting.getBoardSize() / 2);
                 } while (boardPanel.board[x][y] != GameConstants.EMPTY);
                 break;
             case 3:
                 do { // x2, y2 lower-right
-                    x = (int) (random.nextInt(BOARD_UNITS / 2) + ceil(BOARD_UNITS / 2.0));
-                    y = (int) (random.nextInt(BOARD_UNITS / 2) + ceil(BOARD_UNITS / 2.0));
+                    x = (int) (random.nextInt(setting.getBoardSize() / 2) + ceil(setting.getBoardSize() / 2.0));
+                    y = (int) (random.nextInt(setting.getBoardSize() / 2) + ceil(setting.getBoardSize() / 2.0));
                 } while (boardPanel.board[x][y] != GameConstants.EMPTY);
                 break;
 
@@ -565,7 +564,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             movePanel.downButton.setEnabled(false);
             movePanel.leftButton.setEnabled(false);
 
-        } else if (x == BOARD_UNITS) { // only left
+        } else if (x == setting.getBoardSize()) { // only left
             movePanel.upButton.setEnabled(false);
             movePanel.rightButton.setEnabled(false);
             movePanel.downButton.setEnabled(false);
@@ -577,7 +576,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             movePanel.downButton.setEnabled(true);
             movePanel.leftButton.setEnabled(false);
 
-        } else if (y == BOARD_UNITS) { // only up
+        } else if (y == setting.getBoardSize()) { // only up
             movePanel.upButton.setEnabled(true);
             movePanel.rightButton.setEnabled(false);
             movePanel.downButton.setEnabled(false);
@@ -591,13 +590,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 movePanel.upButton.setEnabled(true);
             }
 
-            if (x == BOARD_UNITS - 1 || isWall(x + 1, y, false) || isTrace(x + 1, y)) { // right dir
+            if (x == setting.getBoardSize() - 1 || isWall(x + 1, y, false) || isTrace(x + 1, y)) { // right dir
                 movePanel.rightButton.setEnabled(false);
             } else {
                 movePanel.rightButton.setEnabled(true);
             }
 
-            if (y == BOARD_UNITS - 1 || isWall(x, y + 1, false) || isTrace(x, y + 1)) { // down dir
+            if (y == setting.getBoardSize() - 1 || isWall(x, y + 1, false) || isTrace(x, y + 1)) { // down dir
                 movePanel.downButton.setEnabled(false);
             } else {
                 movePanel.downButton.setEnabled(true);
@@ -629,8 +628,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     void checkHouse() { // applies appropriate behavior
         Player curPlayer = players[turn];
 
-        for (int i = turn, j = 0; j < NUMBER_OF_PLAYERS - 1; ++i, ++j) { // first check for fight
-            int nxtTurn = (i + 1) % NUMBER_OF_PLAYERS;
+        for (int i = turn, j = 0; j < setting.getNumberOfPlayers() - 1; ++i, ++j) { // first check for fight
+            int nxtTurn = (i + 1) % setting.getNumberOfPlayers();
             if (curPlayer._x == players[nxtTurn]._x && curPlayer._y == players[nxtTurn]._y) {
                 boolean result = applyFight(players[nxtTurn]); // fight
                 scoreboardPanel.updateState();
@@ -797,7 +796,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     void nextPlayer() { // called after complete moves or wrong moves
         /* make things ready for next player.*/
         players[turn].toggleTurn(); // set off previous
-        turn = (turn + 1) % NUMBER_OF_PLAYERS;
+        turn = (turn + 1) % setting.getNumberOfPlayers();
         players[turn].toggleTurn(); // set on current
 
         diceNumber = 0;
@@ -857,10 +856,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private int getNRemainingTreasures() { // todo or loop through array
-//        System.out.println("GamePanel.getNRemainingTreasures");
-//        System.out.println("NUMBER_OF_TREASURES = " + NUMBER_OF_TREASURES);
-//        System.out.println("curQuest = " + curQuest);
-//        return NUMBER_OF_TREASURES - curQuest;
         System.out.println("GamePanel.getNRemainingTreasures");
         int n = 0;
         for (Treasure treasure : treasures) {

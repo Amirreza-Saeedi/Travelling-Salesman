@@ -17,7 +17,7 @@ public class GameFrame extends JFrame implements WindowListener {
         this.add(panel);
         this.setTitle("Travelling Salesman");
         this.setResizable(false);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
@@ -30,7 +30,9 @@ public class GameFrame extends JFrame implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent e) {
-
+        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this, "Are you sure?",
+                "Exit the Game", JOptionPane.YES_NO_OPTION))
+            System.exit(0);
 
     }
 

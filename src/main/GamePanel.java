@@ -17,6 +17,7 @@ import static java.lang.Math.ceil;
 import static java.lang.Math.max;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
+    private JFrame frame;
     //screen and map sizes
     private static final int FRAME_WIDTH = 1500;
     private static final double FRAME_RATIO = 4.0 / 7;
@@ -84,7 +85,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private boolean isEnded = false;
 
 
-    public GamePanel() {
+    public GamePanel(JFrame frame) {
         // create main panel
         super();
         this.setPreferredSize(SCREEN_SIZE);
@@ -92,10 +93,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         this.setLayout(null);
         this.addKeyListener(this);
         this.setFocusable(true);
+        this.frame = frame;
+
 
         // game settings
         this.turn = GameConstants.PLAYER_1;
-//        this.difficulty = GameConstants.MEDIUM;
+
 
         // add board panel to the center
         newBoard();
@@ -1062,6 +1065,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 case ' ':
                     diceButton.doClick();
                     break;
+                case KeyEvent.VK_ESCAPE:
+                    new PauseDialog(frame);
             }
 
         }

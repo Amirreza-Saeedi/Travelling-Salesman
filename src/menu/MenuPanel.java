@@ -69,6 +69,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == newGameButton) {
             new GameFrame();
+            frame.dispose();
 
         } else if (e.getSource() == settingButton) {
             new SettingDialog(frame);

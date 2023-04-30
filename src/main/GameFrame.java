@@ -2,25 +2,27 @@ package main;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 public class GameFrame extends JFrame implements WindowListener {
-    // TODO set width and height monitor size dependently
+    // TODO set width and height monitor-size-dependent
     static final int FRAME_WIDTH = 1000;
     static final private float RATIO = 1;
     static final int FRAME_HEIGHT = (int) (FRAME_WIDTH * RATIO);
     public GameFrame() {
-        //this.setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
-        JPanel panel = new GamePanel();
-        // panel.setBorder(new LineBorder(Color.RED, 5));
+        JPanel panel = new GamePanel(this);
         this.add(panel);
         this.setTitle("Travelling Salesman");
         this.setResizable(false);
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.pack();
         this.setLocationRelativeTo(null);
+//        this.setFocusable(true);
         this.setVisible(true);
+        addWindowListener(this);
     }
 
     @Override
@@ -60,4 +62,5 @@ public class GameFrame extends JFrame implements WindowListener {
     public void windowDeactivated(WindowEvent e) {
 
     }
+
 }

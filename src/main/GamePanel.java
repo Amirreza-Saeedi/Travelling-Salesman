@@ -50,7 +50,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     ScoreboardPanel scoreboardPanel;
     StatePanel sidePanel;
     BoardMap boardPanel;
-    Market.MarketPanel marketPanel = null;
+    ShoppingPanel marketPanel = null;
     private final Random random = new Random();
     private Castle castle;
     private Loot[] loots;
@@ -764,16 +764,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (treasure == null) {
             System.err.println("GamePanel.applyMarket");
         }
-        marketPanel = new Market.MarketPanel(new Rectangle(getX(), getX(), getWidth(), getHeight()),
-                treasure, players[turn]);
-        // add to listener
-        for (JButton button : marketPanel.getButtons()) {
-            button.addActionListener(this);
-        }
-        add(marketPanel);
-//        setEnabled(false);
 
         sidePanel.update(markets[0]);
+        new ShoppingDialog((GameFrame) frame, treasure, players[turn], scoreboardPanel); // todo casting is ok?
+//        // add to listener
+//        for (JButton button : marketPanel.getButtons()) {
+//            button.addActionListener(this);
+//        }
+//        add(marketPanel);
+//        setEnabled(false);
+
         System.out.println();
     }
 
@@ -959,85 +959,58 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // market panel
-        if (marketPanel != null && marketPanel.isRunning()) {
-            System.out.println("GamePanel.actionPerformed");
-            for (int i = 0; i < marketPanel.weaponsButtons.length; i++) { // btn 1, 2, 3
-                if (e.getSource() == marketPanel.weaponsButtons[i]) {
-                    marketPanel.buyWeapon(marketPanel.weapons[i]);
-                    scoreboardPanel.updateState();
-                    marketPanel.returnButton.doClick();
-                }
-            }
-            if (e.getSource() == marketPanel.treasureButton) { // btn 4
-                marketPanel.buyTreasure();
-                scoreboardPanel.updateState();
-                marketPanel.returnButton.doClick();
-            } else if (e.getSource() == marketPanel.returnButton) { // ret btn
-                marketPanel.returnToGame();
-                remove(marketPanel);
-                setEnabled(true);
-                System.err.println("RETURN");
-                repaint();
-            }
-            System.out.println();
-        }
-
         // main panel
-        else {
-            // simplify variables:
-            Player player = players[turn];
+        // simplify variables:
+        Player player = players[turn];
 
-            // dice:
-            if (e.getSource() == diceButton) {
-                diceNumber = (byte) diceMap.throwDice();
-                diceButton.setEnabled(false);
-                repaint();
-            }
-
-            // moves:
-            else if (e.getSource() == movePanel.upButton && diceNumber != 0) { // go up
-                traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
-
-                player.y -= boardPanel.UNIT_SIZE;
-                player._y--;
-
-                repaint();
-                moveListener();
-                repaint();
-
-            } else if (e.getSource() == movePanel.rightButton && diceNumber != 0) { // go right
-                traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
-
-                player.x += boardPanel.UNIT_SIZE;
-                player._x++;
-
-                repaint();
-                moveListener();
-                repaint();
-
-            } else if (e.getSource() == movePanel.downButton && diceNumber != 0) { // go down
-                traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
-
-                player.y += boardPanel.UNIT_SIZE;
-                player._y++;
-
-                repaint();
-                moveListener();
-                repaint();
-
-            } else if (e.getSource() == movePanel.leftButton && diceNumber != 0) { // go left
-                traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
-
-                player.x -= boardPanel.UNIT_SIZE;
-                player._x--;
-
-                repaint();
-                moveListener();
-                repaint();
-            }
+        // dice:
+        if (e.getSource() == diceButton) {
+            diceNumber = (byte) diceMap.throwDice();
+            diceButton.setEnabled(false);
+            repaint();
         }
 
+        // moves:
+        else if (e.getSource() == movePanel.upButton && diceNumber != 0) { // go up
+            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+            player.y -= boardPanel.UNIT_SIZE;
+            player._y--;
+
+            repaint();
+            moveListener();
+            repaint();
+
+        } else if (e.getSource() == movePanel.rightButton && diceNumber != 0) { // go right
+            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+            player.x += boardPanel.UNIT_SIZE;
+            player._x++;
+
+            repaint();
+            moveListener();
+            repaint();
+
+        } else if (e.getSource() == movePanel.downButton && diceNumber != 0) { // go down
+            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+            player.y += boardPanel.UNIT_SIZE;
+            player._y++;
+
+            repaint();
+            moveListener();
+            repaint();
+
+        } else if (e.getSource() == movePanel.leftButton && diceNumber != 0) { // go left
+            traces[nTrace].setTrace(player.x, player.y, player._x, player._y);
+
+            player.x -= boardPanel.UNIT_SIZE;
+            player._x--;
+
+            repaint();
+            moveListener();
+            repaint();
+        }
     }
 
     @Override
@@ -1055,43 +1028,24 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // market panel
-        if (marketPanel != null && marketPanel.isRunning()) {
-            if (e.getKeyCode() == '1') { // btn 1
-                marketPanel.weaponsButtons[0].doClick();
-            } else if (e.getKeyCode() == '2') { // btn 2
-                marketPanel.weaponsButtons[1].doClick();
-            } else if (e.getKeyCode() == '3') { // btn 3
-                marketPanel.weaponsButtons[2].doClick();
-            } else if (e.getKeyCode() == '4') { // btn 4
-                marketPanel.treasureButton.doClick();
-            } else if (e.getKeyCode() == 27) {
-                marketPanel.returnButton.doClick();
-            }
-        }
-
-        // main panel
-        else {
-            switch (e.getKeyCode()) {
-                case 37: // left arrow
-                    movePanel.leftButton.doClick();
-                    break;
-                case 38: // up arrow
-                    movePanel.upButton.doClick();
-                    break;
-                case 39: // right arrow
-                    movePanel.rightButton.doClick();
-                    break;
-                case 40: // down arrow
-                    movePanel.downButton.doClick();
-                    break;
-                case ' ':
-                    diceButton.doClick();
-                    break;
-                case KeyEvent.VK_ESCAPE:
-                    new PauseDialog(frame);
-            }
-
+        switch (e.getKeyCode()) {
+            case 37: // left arrow
+                movePanel.leftButton.doClick();
+                break;
+            case 38: // up arrow
+                movePanel.upButton.doClick();
+                break;
+            case 39: // right arrow
+                movePanel.rightButton.doClick();
+                break;
+            case 40: // down arrow
+                movePanel.downButton.doClick();
+                break;
+            case ' ':
+                diceButton.doClick();
+                break;
+            case KeyEvent.VK_ESCAPE:
+                new PauseDialog(frame);
         }
     }
 }

@@ -20,10 +20,6 @@ public class PauseDialog extends JDialog implements KeyListener {
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        new PauseDialog(new GameFrame());
-    }
-
     @Override
     public void keyTyped(KeyEvent e) {
 

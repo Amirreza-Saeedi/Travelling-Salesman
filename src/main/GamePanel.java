@@ -17,7 +17,7 @@ import static java.lang.Math.ceil;
 import static java.lang.Math.max;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
-    private JFrame frame;
+    private final JFrame frame;
     //screen and map sizes
     private static final int FRAME_WIDTH = 1500;
     private static final double FRAME_RATIO = 4.0 / 7;
@@ -48,6 +48,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     //    JPanel mapPanel; // TODO convert mapRect to panel?
     ScoreboardPanel scoreboardPanel;
+    StatePanel sidePanel;
     BoardMap boardPanel;
     Market.MarketPanel marketPanel = null;
     private final Random random = new Random();
@@ -60,6 +61,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private StartHouse startHouse; // TODO provide more than one house, and let the player try his chance and throw dice to choose one of them
 
     private Player[] players; // TODO array or not?
+    private Player curPlayer;
 
     private DiceMap diceMap;
     private JButton diceButton;
@@ -69,7 +71,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Trace[] traces;
     private int nTrace;
 
-    public int turn;
+    public int turn = GameConstants.PLAYER_1;;
     private int curQuest = 0;
     private int[] questList; // shuffled list of treasures id
 
@@ -95,11 +97,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         this.setFocusable(true);
         this.frame = frame;
 
-
-        // game settings
-        this.turn = GameConstants.PLAYER_1;
-
-
         // add board panel to the center
         newBoard();
         UNIT_SIZE = boardPanel.UNIT_SIZE;
@@ -113,17 +110,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         newDice();
         newMovePanel();
         newScoreboard();
+        newSidePanel();
 
         newQuest();
+
+        // game settings
+        this.turn = GameConstants.PLAYER_1;
+        curPlayer = players[0];
     }
-
-
 
 
     public void newBoard() { // panel at center
         int deltaWidth = FRAME_WIDTH - MAP_WIDTH;
         boardPanel = new BoardMap(deltaWidth / 2, 0, MAP_WIDTH, MAP_HEIGHT, setting.getBoardSize());
     }
+
 
     void newDice() { // panel at lower-left
         // init dice obj
@@ -155,7 +156,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         movePanel.downButton.addActionListener(this);
         movePanel.leftButton.addActionListener(this);
         add(movePanel);
-        
+
     }
 
     private void newScoreboard() { // panel at upper-right
@@ -167,13 +168,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         add(scoreboardPanel);
     }
 
+    private void newSidePanel() {
+        int width = boardPanel.x;
+        int height = diceMap.y;
+        sidePanel = new StatePanel(new Rectangle(0, 0, width, height), players);
+        add(sidePanel);
+    }
+
 
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         draw(g);
         // todo temp
-        Rectangle r = scoreboardPanel.quest.getRectangle();
+        Rectangle r = Quest.getInstance().getTreasure();
         g.setColor(new Color(0x37FFFFFF, true));
         g.fillRect(r.x, r.y, r.width, r.height);
 
@@ -497,11 +505,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         System.out.println("GamePanel.nextQuest");
         if (curQuest < questList.length) {
             Treasure treasure = treasures[questList[curQuest]];
-            scoreboardPanel.quest.setQuest(treasure);
+            Quest.getInstance().setQuest(treasure); // set quest
             boardPanel.board[treasure._x][treasure._y] = GameConstants.QUEST; // add location to board
+
             ++ curQuest;
         } else {
-            scoreboardPanel.quest.setQuest(null);
+            Quest.getInstance().setQuest(null);
         }
     }
 
@@ -668,7 +677,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         return players[turn].fight(opponent); // todo random start house
     }
 
-    void applyTreasure() { // it is called if and only if treasure is announced on quest or is bought from market
+    void applyTreasure() { // called if and only if treasure been set on quest
         Player player = players[turn];
         Treasure treasure = (Treasure) findElement(new Treasure(), player._x, player._y);
         if (treasure == null) { // check for err
@@ -679,7 +688,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (!player.locatedTreasures[treasure.getId()]) { // todo find a better arrangement
             System.out.println("main.GamePanel.applyTreasure");
             player.locatedTreasures[treasure.getId()] = true;
+
+            sidePanel.update(treasure);
             repaint();
+
             JOptionPane.showMessageDialog(this,
                     String.format("%s founded! Deliver it to castle to earn its prize.", treasure.getTitle()),
                     "Treasure", JOptionPane.INFORMATION_MESSAGE);
@@ -698,6 +710,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             player.applyTrap(trap);
             player.locatedTraps[trap.getId()] = true;
             scoreboardPanel.updateState();
+            sidePanel.update(trap);
 
             repaint();
 
@@ -716,7 +729,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     void applyCastle() { // is called when
         System.out.println("main.GamePanel.applyCastle");
         Player player = players[turn];
-        int questID = scoreboardPanel.quest.getId();
+        int questID = Quest.getInstance().getTreasure().getId();
+        sidePanel.update(castle);
 
         if (player.locatedTreasures[questID]) { // if player has treasure address
             Treasure treasure = treasures[questID];
@@ -740,6 +754,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     "\"Hmm. Find wanted treasure then come back to earn your prize\".",
                     "Castle", JOptionPane.INFORMATION_MESSAGE);
         }
+
         System.out.println();
     }
 
@@ -758,6 +773,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         add(marketPanel);
 //        setEnabled(false);
 
+        sidePanel.update(markets[0]);
         System.out.println();
     }
 
@@ -773,6 +789,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 player.applyLoot(loot);
                 boardPanel.board[player._x][player._y] = GameConstants.EMPTY; // free the house
                 scoreboardPanel.updateState();
+                sidePanel.update(loot);
 
                 repaint();
 
@@ -798,10 +815,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     void nextPlayer() { // called after complete moves or wrong moves
         /* make things ready for next player.*/
-        players[turn].toggleTurn(); // set off previous
+        players[turn].toggleTurn(); // set off previous // todo necessary?
+        System.out.println("player1 name = " + players[turn].getTitle());
+        System.out.println("player1 turn = " + players[turn].isTurn());
         turn = (turn + 1) % setting.getNumberOfPlayers();
         players[turn].toggleTurn(); // set on current
+        System.out.println("player2 name = " + players[turn].getTitle());
+        System.out.println("player2 turn = " + players[turn].isTurn());
+        curPlayer = players[turn];
 
+        sidePanel.update();
         diceNumber = 0;
         nTrace = 0;
         diceButton.setEnabled(true);
@@ -844,7 +867,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         // set tie
-        if (nRemainingTreasures == 0) {
+        if (nRemainingTreasures == 0 && getNAlivePlayers() != 1) {
             System.out.println("drawer loop");
             for (Player player : players) {
                 if (player.isPlaying()) {
@@ -888,7 +911,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         return n;
     }
 
-    private Element findElement(Element element, int x, int y) {
+    private Element findElement(Element element, int x, int y) { // called in apply loot, trap and treasure
         Element[] elements;
         if (element instanceof Loot) {
             elements = loots;
@@ -896,7 +919,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             elements = traps;
         } else if (element instanceof Treasure) {
             elements = treasures;
-        }  // todo add markets
+        }
         else {
             System.err.println("GamePanel.findElement\nInvalid input");
             return null;

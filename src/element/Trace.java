@@ -1,10 +1,10 @@
-package main;
+package element;
 
 import java.awt.*;
 
 public class Trace extends Rectangle {
-    int _x; // board x coordinate
-    int _y; // board y coordinate
+    public int _x; // board x coordinate
+    public int _y; // board y coordinate
 
     public Trace(int x, int y, int width, int height) {
         super(x, y, width, height);

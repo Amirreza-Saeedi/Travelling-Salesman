@@ -5,6 +5,7 @@ import java.awt.*;
 public class BoardMap extends Rectangle {
     private final int BOARD_UNITS;
     public final int UNIT_SIZE;
+    public final static Color BOARD_COLOR = new Color(0xFF7BC2BB);
     private final Rectangle BOARD = new Rectangle();
     private final Rectangle UNIT = new Rectangle(); // TODO necessary?
     int[][] board;
@@ -63,7 +64,7 @@ public class BoardMap extends Rectangle {
 
     private void drawBoard(Graphics g) {
         //g.setColor(new Color(0x3AC0AD));
-        g.setColor(new Color(0xFF7BC2BB));
+        g.setColor(BOARD_COLOR);
         g.fillRect(BOARD.x, BOARD.y, BOARD.width, BOARD.height);
         g.setColor(Color.BLACK);
         g.drawRect(BOARD.x, BOARD.y, BOARD.width, BOARD.height);

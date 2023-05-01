@@ -16,7 +16,6 @@ public class ScoreboardPanel extends JPanel {
     private String secondString = String.format("%02d", second);
     private String minuteString = String.format("%02d", minute);;
     private JLabel timerLabel = new JLabel();
-    public Quest quest;
     private int unit;
     private PlayerComponent[] playerComponents;
 
@@ -41,7 +40,6 @@ public class ScoreboardPanel extends JPanel {
         VERTICAL_UNIT = height / 10;
 
         newTimer();
-        newQuest();
         newPlayerComponents(players);
     }
 
@@ -51,7 +49,7 @@ public class ScoreboardPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(1));
         g2.setColor(Color.BLACK);
-        int y0 = quest.label.getY() + quest.label.getHeight(); // y start of todo players panel
+        int y0 = timerLabel.getY() + timerLabel.getHeight(); // y start of todo players panel
 
         for (int i = 0; i < playerComponents.length - 1; i++) { // divider line
             int y = y0 + (i + 1) * unit;
@@ -128,7 +126,7 @@ public class ScoreboardPanel extends JPanel {
         playerComponents = new PlayerComponent[players.length];
 
         // ingredients
-        int y0 = quest.label.getY() + quest.label.getHeight(); // start y
+        int y0 = timerLabel.getY() + timerLabel.getHeight(); // start y
         int mainHeight = getHeight() - y0; // height of players panel
         unit = mainHeight / players.length; // distance between each of two players
         int size = 20; // used for label height and font size
@@ -210,17 +208,6 @@ public class ScoreboardPanel extends JPanel {
         timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
         timer.start();
         this.add(timerLabel);
-    }
-
-    private void newQuest() {
-        quest = new Quest();
-        JLabel label = quest.label;
-        label.setBounds(0, timerLabel.getY() + VERTICAL_UNIT, this.getWidth(), VERTICAL_UNIT);
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setVerticalAlignment(SwingConstants.TOP);
-        label.setFont(new Font("", Font.PLAIN, VERTICAL_UNIT - 20));
-        label.setBorder(new LineBorder(Color.BLACK, 1));
-        add(label);
     }
 
     private static class PlayerComponent {

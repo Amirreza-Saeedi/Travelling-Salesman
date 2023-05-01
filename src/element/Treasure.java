@@ -6,6 +6,8 @@ import java.awt.*;
 public class Treasure extends Element implements Lootable { // contains 8 different valuable treasures
     private boolean looted;
     private int value;
+    public final static Color COLOR = new Color(0x02B151);
+
 
     public static final String[] namesList = {
             "Diamond Ring", "Jeweled Sword",    "Golden Mug",   "Crystal Cup",
@@ -20,7 +22,7 @@ public class Treasure extends Element implements Lootable { // contains 8 differ
     public Treasure(int x, int y, int width, int height, int id, int _x, int _y, String title, int value) { // const 1
         super(x, y, width, height, id, _x, _y, title);
         this.setValue(value);
-        this.setColor(new Color(0x02B151));
+        this.setColor(COLOR);
         newLabel(getTitle()); // create label
 
         setVisible(false);

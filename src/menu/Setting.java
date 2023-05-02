@@ -1,5 +1,7 @@
 package menu;
 
+import java.awt.*;
+
 public class Setting {
 
     // difficulty
@@ -8,14 +10,15 @@ public class Setting {
     public static final int MEDIUM = 2;
     public static final int HARD = 3;
 
+    // modes
     private int numberOfPlayers = 2;
     final static int MIN_PLAYERS = 2;
     final static int MAX_PLAYERS = 4;
 
+    // board
     private int boardSize = 10;
     final static int MIN_SIZE = 6;
     final static int MAX_SIZE = 12;
-
     private final static Setting instance = new Setting();
     private Setting() {
     }

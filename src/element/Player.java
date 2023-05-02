@@ -12,6 +12,7 @@ public class Player extends Element { // todo extend or not?
     public boolean[] lootedTreasures; // determine looted treasures
     public boolean[] locatedTreasures; // determine located treasures
     public boolean[] locatedTraps; // determine located traps
+    private Treasure[] treasures = new Treasure[GamePanel.NUMBER_OF_TREASURES];
     private int power;
     private int coin;
     private int numberOfTreasures;
@@ -203,6 +204,8 @@ public class Player extends Element { // todo extend or not?
         System.out.println(treasure);
         gainCoin(treasure.getValue());
         this.lootedTreasures[treasure.getId()] = true;
+
+        treasures[numberOfTreasures] = treasure;
         numberOfTreasures++;
     }
 
@@ -222,12 +225,17 @@ public class Player extends Element { // todo extend or not?
         return numberOfTreasures;
     }
 
+
     public int getNumberOfTraps() {
         return numberOfTraps;
     }
 
     public int getNumberOfLoots() {
         return numberOfLoots;
+    }
+
+    public int getPoints() {
+        return numberOfTreasures * 1000 + power;
     }
 
     public boolean isTurn() {
@@ -252,6 +260,10 @@ public class Player extends Element { // todo extend or not?
 
     public boolean isPlaying() { // if player hasn't lost
         return state != GameConstants.LOST;
+    }
+
+    public Treasure getTreasures(int index) {
+        return treasures[index];
     }
 
     @Override

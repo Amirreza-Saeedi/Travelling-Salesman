@@ -17,7 +17,7 @@ import static java.lang.Math.ceil;
 import static java.lang.Math.max;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
-    private final JFrame frame;
+    private final GameFrame frame;
     //screen and map sizes
     private static final int FRAME_WIDTH = 1500;
     private static final double FRAME_RATIO = 4.0 / 7;
@@ -50,7 +50,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     ScoreboardPanel scoreboardPanel;
     StatePanel sidePanel;
     BoardMap boardPanel;
-    ShoppingPanel marketPanel = null;
+
     private final Random random = new Random();
     private Castle castle;
     private Loot[] loots;
@@ -87,7 +87,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private boolean isEnded = false;
 
 
-    public GamePanel(JFrame frame) {
+    public GamePanel(GameFrame frame) {
         // create main panel
         super();
         this.setPreferredSize(SCREEN_SIZE);
@@ -95,6 +95,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         this.setLayout(null);
         this.addKeyListener(this);
         this.setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
         this.frame = frame;
 
         // add board panel to the center
@@ -819,6 +820,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         System.out.println("player1 name = " + players[turn].getTitle());
         System.out.println("player1 turn = " + players[turn].isTurn());
         turn = (turn + 1) % setting.getNumberOfPlayers();
+        if (!players[turn].isPlaying()) // jump loser turn
+            nextPlayer();
         players[turn].toggleTurn(); // set on current
         System.out.println("player2 name = " + players[turn].getTitle());
         System.out.println("player2 turn = " + players[turn].isTurn());
@@ -847,6 +850,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         for (Player player : players) {
             if (player.getNumberOfTreasures() + nRemainingTreasures < maxTreasures) {
                 player.setState(GameConstants.LOST);
+                JOptionPane.showMessageDialog(this, "Player '" + player.getTitle() + "'lost!",
+                        "", JOptionPane.ERROR_MESSAGE);
+                // todo press 't'
+
+                new ResultDialog(frame, players);
             }
             System.out.println("player.getTitle() = " + player.getTitle());
             System.out.println("player.getState() = " + player.getState());
@@ -858,7 +866,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             for (Player player : players) {
                 if (player.isPlaying()) {
                     player.setState(GameConstants.WON);
-                    JOptionPane.showMessageDialog(this, "Player '" + player.getTitle() + "' won!");
+                    JOptionPane.showMessageDialog(this, "Player '" + player.getTitle() + "' won!",
+                            "", JOptionPane.PLAIN_MESSAGE);
+
+                    new ResultDialog(frame, players);
                 }
                 System.out.println("player.getTitle() = " + player.getTitle());
                 System.out.println("player.getState() = " + player.getState());
@@ -1046,6 +1057,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 break;
             case KeyEvent.VK_ESCAPE:
                 new PauseDialog(frame);
+                break;
+            case '\t':
+                new ResultDialog(frame, players); // todo just set it visible?
+
         }
     }
 }

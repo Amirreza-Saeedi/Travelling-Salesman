@@ -13,7 +13,9 @@ public class ShoppingDialog extends JDialog {
         ShoppingPanel shoppingPanel = new ShoppingPanel(this, treasure, player, scoreboardPanel);
         add(shoppingPanel);
         pack();
+        setTitle("Market");
         setLocationRelativeTo(null);
+        setResizable(false);
         setLayout(null);
 
         setVisible(true);

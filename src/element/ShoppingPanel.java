@@ -1,5 +1,6 @@
 package element;
 
+import menu.Theme;
 import scoreboard.ScoreboardPanel;
 
 import javax.swing.*;
@@ -15,7 +16,7 @@ public class ShoppingPanel extends JPanel  implements ActionListener, KeyListene
     JLabel titleLabel = new JLabel("Today Offers:", SwingConstants.LEFT);
     JLabel[] weaponsLabels = new JLabel[3];
     public JButton[] weaponsButtons = new JButton[3];
-    JLabel returnLabel = new JLabel();
+//    JLabel returnLabel = new JLabel();
     private final JButton returnButton = new JButton();
     Treasure treasure;
     JLabel treasureLabel = new JLabel();
@@ -29,8 +30,7 @@ public class ShoppingPanel extends JPanel  implements ActionListener, KeyListene
         super(null);
         setPreferredSize(new Dimension(500, 300));
         setSize(500, 300);
-        setBackground(Color.WHITE);
-        setBorder(new EtchedBorder(EtchedBorder.RAISED, Color.BLACK, Color.BLACK));
+        setBackground(Theme.DARK_THEME.backColor);
         setFocusable(true);
         addKeyListener(this);
         this.parentDialog = parentDialog;
@@ -43,9 +43,21 @@ public class ShoppingPanel extends JPanel  implements ActionListener, KeyListene
     }
 
     void newComponents() { // title, items and return components
+        int size = 15;
+        Font font = new Font("", Font.PLAIN, size);
+
+        JLabel marketLabel = new JLabel("Market");
+        marketLabel.setFont(new Font("ink free", Font.BOLD, 50));
+        marketLabel.setBounds(0, 10, getWidth(), 60);
+        marketLabel.setForeground(Theme.DARK_THEME.foreColor);
+        marketLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(marketLabel);
+
         // title
-        titleLabel.setBounds(20, 20, getWidth(), 50);
+        titleLabel.setBounds(20, 80, getWidth(), 50);
         titleLabel.setVerticalAlignment(SwingConstants.TOP);
+        titleLabel.setForeground(Theme.DARK_THEME.foreColor);
+        titleLabel.setFont(font);
         add(titleLabel);
 
         // weapons
@@ -57,18 +69,21 @@ public class ShoppingPanel extends JPanel  implements ActionListener, KeyListene
             weaponsLabels[i] = new JLabel(String.format("%d- %-30s Power: %d   Price: %d", i + 1,
                     weapon.title, weapon.power, weapon.price));
             label = weaponsLabels[i];
-            label.setBounds(titleLabel.getX() + 10, titleLabel.getY() + 40 * (i + 1),
+            label.setBounds(titleLabel.getX() + 10, titleLabel.getY() + 30 * (i + 1),
                     getWidth(), 20);
             label.setVerticalAlignment(SwingConstants.CENTER);
+            label.setForeground(Theme.DARK_THEME.foreColor);
+            label.setFont(font);
             add(label);
 
             weaponsButtons[i] = new JButton((i + 1) + "");
             button = weaponsButtons[i];
-            button.setLocation(25 + 70 * i, getHeight() - 50);
+            button.setLocation(75 + 70 * i, getHeight() - 50);
             button.setSize(50, 30);
             button.setFocusable(false);
             if (player.getCoin() < weapon.price) // if money is not enough
                 button.setEnabled(false);
+            button.setBackground(Theme.BRIGHT_THEME.backColor);
             button.addActionListener(this);
             add(button);
         }
@@ -76,8 +91,10 @@ public class ShoppingPanel extends JPanel  implements ActionListener, KeyListene
         // treasure
         if (treasure != null) {
             treasureLabel.setText((String.format("%d- %-30s Price: %d", i + 1, "Treasure Map", treasurePrice)));
-            treasureLabel.setBounds(label.getX(), label.getY() + 40,
+            treasureLabel.setBounds(label.getX(), label.getY() + 30,
                     getWidth(), 20);
+            treasureLabel.setForeground(Theme.DARK_THEME.foreColor);
+            treasureLabel.setFont(font);
             add(treasureLabel);
             label = treasureLabel;
 
@@ -87,19 +104,22 @@ public class ShoppingPanel extends JPanel  implements ActionListener, KeyListene
             if (player.getCoin() < treasurePrice) // if money is not enough
                 treasureButton.setEnabled(false);
             add(treasureButton);
+            treasureButton.setBackground(Theme.BRIGHT_THEME.backColor);
             treasureButton.addActionListener(this);
             button = treasureButton;
         }
 
         // return
-        returnLabel.setBounds(label.getX(), label.getY() + 40, getWidth(), 20);
-        returnLabel.setText("ESC to return.");
-        add(returnLabel);
+//        returnLabel.setBounds(label.getX(), label.getY() + 40, getWidth(), 20);
+//        returnLabel.setText("ESC to return.");
+//        returnLabel.setForeground(Theme.DARK_THEME.foreColor);
+//        add(returnLabel);
 
         returnButton.setBounds(button.getX() + 70, button.getY(), button.getWidth() + 20, button.getHeight());
-        returnButton.setText("ESC");
+        returnButton.setText("Exit");
         returnButton.setFocusable(false);
         returnButton.addActionListener(this);
+        returnButton.setBackground(Theme.BRIGHT_THEME.backColor);
         add(returnButton);
     }
 

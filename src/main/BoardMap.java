@@ -1,5 +1,7 @@
 package main;
 
+import menu.Theme;
+
 import java.awt.*;
 
 public class BoardMap extends Rectangle {
@@ -48,15 +50,13 @@ public class BoardMap extends Rectangle {
     public void draw(Graphics g) {
         drawBackground(g);
         drawBoard(g);
-        //drawElements(g);
-
     }
 
     private void drawBackground(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(2));
 
-        g2.setColor(Color.WHITE);
+        g2.setColor(Theme.BRIGHT_THEME.backColor);
         g2.fillRect(this.x, this.y, this.width, this.height);
         g2.setColor(Color.BLACK);
         g2.drawRect(this.x, this.y, this.width, this.height);

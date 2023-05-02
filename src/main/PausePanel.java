@@ -1,6 +1,7 @@
 package main;
 
 import menu.MenuFrame;
+import menu.Theme;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -26,7 +27,7 @@ public class PausePanel extends JPanel implements ActionListener {
         super();
         Dimension d = new Dimension(300, 400);
         setPreferredSize(d);
-        setBackground(new Color(0xEAEAEA));
+        setBackground(Theme.DARK_THEME.backColor);
         setSize(d);
         setLayout(null);
         setBorder(new BevelBorder(BevelBorder.RAISED));
@@ -48,6 +49,7 @@ public class PausePanel extends JPanel implements ActionListener {
         titleLabel.setFont(font);
         titleLabel.setLocation(x0, y0);
         titleLabel.setSize(labelSize);
+        titleLabel.setForeground(Theme.DARK_THEME.foreColor);
 
         add(titleLabel);
     }
@@ -65,6 +67,7 @@ public class PausePanel extends JPanel implements ActionListener {
             button.addActionListener(this);
             button.setBackground(null);
             button.setFocusable(false);
+            button.setBackground(Theme.BRIGHT_THEME.backColor);
             add(button);
         }
 

@@ -1,5 +1,7 @@
 package main;
 
+import menu.Theme;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -21,7 +23,7 @@ public class MovePanel extends JPanel {
     public MovePanel(int x, int y, int width, int height) {
         setBounds(x, y, width, height);
         setBorder(new LineBorder(Color.BLACK, 2));
-        setBackground(Color.WHITE);
+        setBackground(Theme.BRIGHT_THEME.backColor);
         setLayout(null);
 
         // init move box
@@ -44,12 +46,16 @@ public class MovePanel extends JPanel {
         upButton = new JButton("U");
         upButton.setToolTipText("Up");
         upButton.setBounds(UP);
+        upButton.setBackground(Theme.DARK_THEME.backColor);
+        upButton.setForeground(Theme.DARK_THEME.foreColor.brighter());
         add(upButton);
         upButton.setFocusable(false);
 
         rightButton = new JButton("R");
         rightButton.setToolTipText("Right");
         rightButton.setBounds(RIGHT);
+        rightButton.setBackground(Theme.DARK_THEME.backColor);
+        rightButton.setForeground(Theme.DARK_THEME.foreColor.brighter());
         add(rightButton);
         rightButton.setFocusable(false);
 
@@ -57,27 +63,31 @@ public class MovePanel extends JPanel {
         downButton = new JButton("D");
         downButton.setToolTipText("Down");
         downButton.setBounds(DOWN);
+        downButton.setBackground(Theme.DARK_THEME.backColor);
+        downButton.setForeground(Theme.DARK_THEME.foreColor.brighter());
         add(downButton);
         downButton.setFocusable(false);
 
         leftButton = new JButton("L");
         leftButton.setToolTipText("Left");
         leftButton.setBounds(LEFT);
+        leftButton.setBackground(Theme.DARK_THEME.backColor);
+        leftButton.setForeground(Theme.DARK_THEME.foreColor.brighter());
         add(leftButton);
         leftButton.setFocusable(false);
     }
 
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-
-        g.setColor(Color.ORANGE);
-        g.drawRect(moveBox.x, moveBox.y, moveBox.width, moveBox.height);
-
-        g2.fillRect(UP.x, UP.y, UP.width, UP.height);
-        g2.fillRect(RIGHT.x, RIGHT.y, RIGHT.width, RIGHT.height);
-        g2.fillRect(DOWN.x, DOWN.y, DOWN.width, DOWN.height);
-        g2.fillRect(LEFT.x, LEFT.y, LEFT.width, LEFT.height);
-    }
+//    public void paintComponent(Graphics g) {
+//        super.paintComponent(g);
+//        Graphics2D g2 = (Graphics2D) g;
+//
+//        g.setColor(Color.ORANGE);
+//        g.drawRect(moveBox.x, moveBox.y, moveBox.width, moveBox.height);
+//
+//        g2.fillRect(UP.x, UP.y, UP.width, UP.height);
+//        g2.fillRect(RIGHT.x, RIGHT.y, RIGHT.width, RIGHT.height);
+//        g2.fillRect(DOWN.x, DOWN.y, DOWN.width, DOWN.height);
+//        g2.fillRect(LEFT.x, LEFT.y, LEFT.width, LEFT.height);
+//    }
 
 }

@@ -2,7 +2,6 @@ package main;
 
 import consts.GameConstants;
 import element.*;
-import scoreboard.ScoreboardPanel;
 import menu.*;
 
 import javax.swing.*;
@@ -819,9 +818,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         players[turn].toggleTurn(); // set off previous // todo necessary?
         System.out.println("player1 name = " + players[turn].getTitle());
         System.out.println("player1 turn = " + players[turn].isTurn());
-        turn = (turn + 1) % setting.getNumberOfPlayers();
-        if (!players[turn].isPlaying()) // jump loser turn
-            nextPlayer();
+        do {
+            turn = (turn + 1) % setting.getNumberOfPlayers();
+        } while (!players[turn].isPlaying());
+//        if (!players[turn].isPlaying()) // jump loser turn
+//            nextPlayer();
         players[turn].toggleTurn(); // set on current
         System.out.println("player2 name = " + players[turn].getTitle());
         System.out.println("player2 turn = " + players[turn].isTurn());

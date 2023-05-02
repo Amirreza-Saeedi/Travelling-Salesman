@@ -1,11 +1,9 @@
 package element;
 
 import main.GameFrame;
-import main.GamePanel;
-import scoreboard.ScoreboardPanel;
+import main.ScoreboardPanel;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class ShoppingDialog extends JDialog {
     public ShoppingDialog(GameFrame parentFrame, Treasure treasure, Player player, ScoreboardPanel scoreboardPanel) {

@@ -11,7 +11,7 @@ public class Setting {
     public static final int HARD = 3;
 
     // modes
-    private int numberOfPlayers = 2;
+    private int numberOfPlayers = 4;
     final static int MIN_PLAYERS = 2;
     final static int MAX_PLAYERS = 4;
 

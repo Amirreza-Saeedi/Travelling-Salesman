@@ -4,6 +4,7 @@ import element.Castle;
 import element.Element;
 import element.Player;
 import element.Treasure;
+import menu.Theme;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -34,7 +35,7 @@ public class StatePanel extends JPanel {
         super(null);
         setBounds(r);
         setBorder(new LineBorder(Color.BLACK, 2));
-        setBackground(new Color(0xF8D980));
+        setBackground(Theme.BRIGHT_THEME.backColor);
 
         newClass(questClass, 30);
         newClass(stateClass, getHeight() / 2);

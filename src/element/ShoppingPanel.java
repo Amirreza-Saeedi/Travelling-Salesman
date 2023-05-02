@@ -1,10 +1,9 @@
 package element;
 
 import menu.Theme;
-import scoreboard.ScoreboardPanel;
+import main.ScoreboardPanel;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

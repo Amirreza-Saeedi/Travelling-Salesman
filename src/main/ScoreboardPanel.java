@@ -1,6 +1,7 @@
-package scoreboard;
+package main;
 
 import element.*;
+import menu.Theme;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -34,7 +35,7 @@ public class ScoreboardPanel extends JPanel {
     public ScoreboardPanel(int x, int y, int width, int height, Player[] players) {
         setBounds(x, y, width, height);
         setBorder(new LineBorder(Color.BLACK, 2));
-        setBackground(Color.WHITE);
+        setBackground(Theme.BRIGHT_THEME.backColor);
         setLayout(null);
         setOpaque(true);
         VERTICAL_UNIT = height / 10;
@@ -93,21 +94,21 @@ public class ScoreboardPanel extends JPanel {
             // show changes todo setVisible?
             if (treasureChanges == 1) { // treasure
                 pc.treasureChangesLabel.setText(String.format("%+d", treasureChanges));
-                pc.treasureChangesLabel.setForeground(Color.GREEN);
+                pc.treasureChangesLabel.setForeground(Color.GREEN.darker());
                 pc.treasureChangesLabel.setVisible(true);
             } else {
                 pc.treasureChangesLabel.setVisible(false);
             }
             if (powerChanges != 0) { // power
                 pc.powerChangesLabel.setText(String.format("%+d", powerChanges));
-                pc.powerChangesLabel.setForeground(powerChanges > 0 ? Color.GREEN : Color.RED);
+                pc.powerChangesLabel.setForeground(powerChanges > 0 ? Color.GREEN.darker() : Color.RED);
                 pc.powerChangesLabel.setVisible(true);
             } else {
                 pc.powerChangesLabel.setVisible(false);
             }
             if (coinChanges != 0) { // coin
                 pc.coinChangesLabel.setText(String.format("%+d", coinChanges));
-                pc.coinChangesLabel.setForeground(coinChanges > 0 ? Color.GREEN : Color.RED);
+                pc.coinChangesLabel.setForeground(coinChanges > 0 ? Color.GREEN.darker() : Color.RED);
                 pc.coinChangesLabel.setVisible(true);
             } else {
                 pc.coinChangesLabel.setVisible(false);
@@ -141,6 +142,7 @@ public class ScoreboardPanel extends JPanel {
             playerNameLabel.setBounds(20, unit * i + y0 + 5, getWidth(), size);
             playerNameLabel.setOpaque(true);
             playerNameLabel.setBackground(player.getColor());
+            playerNameLabel.setForeground(Theme.DARK_THEME.foreColor);
             add(playerNameLabel);
             pc.playerNameLabel = playerNameLabel; // init
 

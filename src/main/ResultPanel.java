@@ -67,7 +67,7 @@ public class ResultPanel extends JPanel implements ActionListener {
         add(treasuresLabel);
 
         // buttons
-        if (!isGameEnded(players)) { // TODO
+        if (isGameEnded(players)) {
             setButtons();
         }
 

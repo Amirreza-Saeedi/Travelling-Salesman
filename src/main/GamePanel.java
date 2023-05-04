@@ -606,11 +606,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    void checkMovePenalty() { // todo if all of move buttons were disabled
+    void checkMovePenalty() { // checkHouse mustn't be called in these circumstances
+        /*punish player,
+        * send him to start house,
+        * skip remaining moves*/
         if (!movePanel.upButton.isEnabled() && !movePanel.rightButton.isEnabled() &&
                 !movePanel.downButton.isEnabled() && !movePanel.leftButton.isEnabled()) {
-            nextPlayer();
+            int fine = players[turn].applyPenalty();
+            scoreboardPanel.updateState();
             repaint();
+            JOptionPane.showMessageDialog(frame, "Don't trap yourself!\n" + fine + " coins lost. Go back to start.",
+                    "Penalty", JOptionPane.ERROR_MESSAGE);
+            nextPlayer();
         }
     }
 

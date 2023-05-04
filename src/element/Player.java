@@ -5,6 +5,8 @@ import java.awt.*;
 import consts.GameConstants;
 import main.*;
 
+import javax.swing.*;
+
 
 public class Player extends Element { // todo extend or not?
     private static final int INITIAL_POWER = 50;
@@ -221,6 +223,12 @@ public class Player extends Element { // todo extend or not?
         this.locatedTreasures[treasure.getId()] = true;
     }
 
+    public int applyPenalty() {
+        int fine = this.coin / 5; // 20%
+        this.loseCoin(fine);
+        this.revive(this);
+        return fine;
+    }
     public int getNumberOfTreasures() {
         return numberOfTreasures;
     }

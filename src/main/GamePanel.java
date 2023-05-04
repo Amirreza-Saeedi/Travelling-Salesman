@@ -60,10 +60,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private StartHouse startHouse; // TODO provide more than one house, and let the player try his chance and throw dice to choose one of them
 
     private Player[] players; // TODO array or not?
-    private Player curPlayer;
-
-    private DiceMap diceMap;
-    private JButton diceButton;
+    private DicePanel dicePanel;
     private byte diceNumber;
 
     private MovePanel movePanel;
@@ -116,7 +113,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         // game settings
         this.turn = GameConstants.PLAYER_1;
-        curPlayer = players[0];
     }
 
 
@@ -132,17 +128,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         int height = FRAME_HEIGHT / 2;
         int x = 0;
         int y = FRAME_HEIGHT / 2;
-        diceMap = new DiceMap(x, y, width, height);
+        dicePanel = new DicePanel(new Rectangle(x, y, width, height));
+        add(dicePanel);
+
         // init dice button
-        diceButton = new JButton("Throw!");
-        diceButton.setFont(new Font("Ink Free", Font.BOLD, 20));
-        diceButton.setBackground(Color.WHITE);;
-        diceButton.setToolTipText("Dice");
-        diceButton.setBounds(diceMap.getDICE());
-        diceButton.setVisible(true);
-        diceButton.setEnabled(true);
-        diceButton.addActionListener(this);
-        this.add(diceButton);
+        dicePanel.getButton().addActionListener(this);
     }
 
     private void newMovePanel() { // panel in lower-right
@@ -170,7 +160,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private void newSidePanel() {
         int width = boardPanel.x;
-        int height = diceMap.y;
+        int height = dicePanel.getY();
         sidePanel = new StatePanel(new Rectangle(0, 0, width, height), players);
         add(sidePanel);
     }
@@ -274,16 +264,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void drawDice(Graphics g) {
-        diceMap.draw(g);
-
-        if (diceNumber != -1) { // show result
-
-            g.setFont(new Font("Ink Free", Font.BOLD, 30));
-            g.drawString(String.format("Remaining Moves: %d", diceNumber),
-                    diceMap.getXNumberPlace() - 110,
-                    diceMap.getYNumberPlace() + diceMap.getHeightNumberPlace()
-            );
-        }
+        dicePanel.update(diceNumber);
     }
 
 
@@ -628,10 +609,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     void checkMovePenalty() { // todo if all of move buttons were disabled
         if (!movePanel.upButton.isEnabled() && !movePanel.rightButton.isEnabled() &&
                 !movePanel.downButton.isEnabled() && !movePanel.leftButton.isEnabled()) {
-/*
-*
-* */
-            System.err.println("DON'T TRAP YOURSELF!");
             nextPlayer();
             repaint();
         }
@@ -766,13 +743,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         sidePanel.update(markets[0]);
-        new ShoppingDialog((GameFrame) frame, treasure, players[turn], scoreboardPanel); // todo casting is ok?
-//        // add to listener
-//        for (JButton button : marketPanel.getButtons()) {
-//            button.addActionListener(this);
-//        }
-//        add(marketPanel);
-//        setEnabled(false);
+        new ShoppingDialog(frame, treasure, players[turn], scoreboardPanel); // todo casting is ok?
 
         System.out.println();
     }
@@ -826,12 +797,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         players[turn].toggleTurn(); // set on current
         System.out.println("player2 name = " + players[turn].getTitle());
         System.out.println("player2 turn = " + players[turn].isTurn());
-        curPlayer = players[turn];
 
         sidePanel.update();
         diceNumber = 0;
         nTrace = 0;
-        diceButton.setEnabled(true);
+        dicePanel.getButton().setEnabled(true);
         System.out.println("players = " + players[turn]);
         System.out.println();
 
@@ -976,9 +946,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         Player player = players[turn];
 
         // dice:
-        if (e.getSource() == diceButton) {
-            diceNumber = (byte) diceMap.throwDice();
-            diceButton.setEnabled(false);
+        if (e.getSource() == dicePanel.getButton()) {
+            diceNumber = (byte) dicePanel.throwDice();
+            dicePanel.getButton().setEnabled(false);
             repaint();
         }
 
@@ -1054,7 +1024,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 movePanel.downButton.doClick();
                 break;
             case ' ':
-                diceButton.doClick();
+                dicePanel.getButton().doClick();
                 break;
             case KeyEvent.VK_ESCAPE:
                 new PauseDialog(frame);

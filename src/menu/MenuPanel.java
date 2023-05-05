@@ -16,7 +16,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     JLabel travellingLabel = new JLabel("Travelling");
     JLabel salesmanLabel = new JLabel("Salesman");
     JButton newGameButton = new JButton("New Game");
-    JButton settingButton = new JButton("Setting");
+    JButton settingButton = new JButton("Settings");
     JButton helpButton = new JButton("Help");
     JButton exitButton = new JButton("Exit");
     JButton[] buttons = {newGameButton, settingButton, helpButton, exitButton};

@@ -9,7 +9,7 @@ public class Setting {
     public static final int HARD = 3;
 
     // modes
-    private int numberOfPlayers = 4;
+    private int numberOfPlayers = 2;
     final static int MIN_PLAYERS = 2;
     final static int MAX_PLAYERS = 4;
 
@@ -18,12 +18,17 @@ public class Setting {
     final static int MIN_SIZE = 6;
     final static int MAX_SIZE = 12;
 
+    // treasures
+    private int numberOfTreasures = 8;
+    final static int MIN_TREASURES = 1;
+    final static int MAX_TREASURES = 8;
+
+
     // elements (amounts, units ...)
     private static final double RATIO_OF_MARKETS_TO_UNITS = 5.0 / (10 * 10);
     private static final double RATIO_OF_LOOTS_TO_UNITS = 13.0 / (10 * 10);
     private static final double RATIO_OF_WALLS_TO_UNITS = 5.0 / (10 * 10);
     private static final double RATIO_OF_TRAPS_TO_UNITS = 5.0 / (10 * 10);
-    private final int NUMBER_OF_TREASURES = 1;
     private final int NUMBER_OF_CASTLES = 1;
 
     private final static Setting instance = new Setting();
@@ -35,7 +40,13 @@ public class Setting {
     }
 
     public int getNumberOfTreasures() {
-        return NUMBER_OF_TREASURES;
+        return numberOfTreasures;
+    }
+
+    public void setNumberOfTreasures(int n) {
+        if (MIN_TREASURES <= n && n <= MAX_TREASURES) {
+            this.numberOfTreasures = n;
+        }
     }
 
     public int getNumberOfMarkets() {

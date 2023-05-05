@@ -219,9 +219,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 if (player.locatedTreasures[id] && !treasure.isLooted()) {
                     treasure.draw(g);
                     treasure.setVisible(true);
+                } else {
+                    treasure.setVisible(false);
                 }
-
-                treasure.setVisible(false);
             }
         } else {
             for (Treasure treasure : treasures) {

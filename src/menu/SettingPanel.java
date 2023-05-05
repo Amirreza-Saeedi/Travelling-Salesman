@@ -34,10 +34,14 @@ public class SettingPanel extends JPanel implements ActionListener, ChangeListen
     // board size
     JLabel boardSizeLabel = new JLabel("Board Size:");
 
+    // treasures
+    JLabel treasuresLabel = new JLabel("Number of Treasures:");
+
     JRadioButton[][] radioButtons = {difficultyRButtons, modeRButtons};
-    JLabel[] labels = {modeLabel, difficultyLabel, boardSizeLabel};
+    JLabel[] labels = {modeLabel, difficultyLabel, boardSizeLabel, treasuresLabel};
 
     JSpinner boardSizeSpinner = new JSpinner();
+    JSpinner treasuresSpinner = new JSpinner();
 
     SettingPanel(JDialog parentDialog) {
         super();
@@ -75,6 +79,14 @@ public class SettingPanel extends JPanel implements ActionListener, ChangeListen
         boardSizeSpinner.setModel(new SpinnerNumberModel(Setting.getInstance().getBoardSize(),
                 Setting.MIN_SIZE, Setting.MAX_SIZE, 1));
         add(boardSizeSpinner);
+
+        // spinner
+        treasuresSpinner.setBounds(hardRButton.getX(), treasuresLabel.getY(),
+                50, 20);
+        treasuresSpinner.addChangeListener(this);
+        treasuresSpinner.setModel(new SpinnerNumberModel(Setting.getInstance().getNumberOfTreasures(),
+                Setting.MIN_TREASURES, Setting.MAX_TREASURES, 1));
+        add(treasuresSpinner);
 
         JButton[] buttons = {closeButton, applyButton, resetButton};
         setButtons(buttons);
@@ -160,6 +172,8 @@ public class SettingPanel extends JPanel implements ActionListener, ChangeListen
             }
 
             setting.setBoardSize((Integer) boardSizeSpinner.getValue()); // board size
+
+            setting.setNumberOfTreasures((Integer) treasuresSpinner.getValue()); // nTreasures
 
             applyButton.setEnabled(false);
 

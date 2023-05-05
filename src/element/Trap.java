@@ -44,6 +44,8 @@ public class Trap extends Element {
         } else if (physicalDamage == physicalDamages[0] && financialDamage == financialDamages[0]) {
             this.title = "Minor Trap";
         }
+
+        this.label.setToolTipText(this.title);
     }
 
     public int getFinancialDamage() {

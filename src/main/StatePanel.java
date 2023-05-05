@@ -58,8 +58,8 @@ public class StatePanel extends JPanel {
 
         obj.detailsLabel.setBounds(obj.titleLabel.getX() - 10,
                 obj.titleLabel.getY() + obj.titleLabel.getHeight() + 20,
-                getWidth(), 20);
-        obj.detailsLabel.setFont(new Font("", Font.PLAIN, obj.detailsLabel.getHeight()));
+                getWidth(), 25);
+        obj.detailsLabel.setFont(new Font("", Font.PLAIN, obj.detailsLabel.getHeight() - 5));
         add(obj.detailsLabel);
 
     }
@@ -120,7 +120,7 @@ public class StatePanel extends JPanel {
 
     public void update(Element element) { // called at end of move
         stateColor = element.getColor();
-        stateClass.detailsLabel.setText("- " + element.getTitle());
+        stateClass.detailsLabel.setText("- " + ((element instanceof Player) ? "Fight " : "") + element.getTitle());
 
         repaint();
     }

@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.max;
@@ -32,7 +34,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     //    JPanel mapPanel; // TODO convert mapRect to panel?
     ScoreboardPanel scoreboardPanel;
-    StatePanel sidePanel;
+    StatePanel statePanel;
     Board boardPanel;
 
     private final Random random = new Random();
@@ -149,8 +151,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private void newSidePanel() {
         int width = boardPanel.x;
         int height = dicePanel.getY();
-        sidePanel = new StatePanel(new Rectangle(0, 0, width, height), players);
-        add(sidePanel);
+        statePanel = new StatePanel(new Rectangle(0, 0, width, height), players);
+        add(statePanel);
     }
 
 
@@ -184,9 +186,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void drawPlayers(Graphics g) {
-        for (Player player : players) {
-            if (player.isPlaying()) {
-                player.draw(g);
+        if (!isEnded) {
+            players[turn].draw(g);
+        } else {
+            for (Player player : players) {
+                if (player.isPlaying()) {
+                    player.draw(g);
+                }
             }
         }
     }
@@ -206,11 +212,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void drawTreasures(Graphics g) {
-        for (Treasure treasure : treasures) {
-            Player player = players[turn];
-            int id = treasure.getId();
-            if (player.locatedTreasures[id] && !treasure.isLooted())
+        if (!isEnded) {
+            for (Treasure treasure : treasures) {
+                Player player = players[turn];
+                int id = treasure.getId();
+                if (player.locatedTreasures[id] && !treasure.isLooted()) {
+                    treasure.draw(g);
+                    treasure.setVisible(true);
+                }
+
+                treasure.setVisible(false);
+            }
+        } else {
+            for (Treasure treasure : treasures) {
                 treasure.draw(g);
+                treasure.setVisible(true);
+            }
         }
     }
 
@@ -221,23 +238,47 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void drawLoots(Graphics g) { // todo find better algorithm
-        for (Loot loot : loots) {
-            if (loot.isVisible())
-                loot.draw(g);
+        if (!isEnded) {
+            for (Loot loot : loots) {
+                if (loot.isVisible()) {
+                    loot.draw(g);
+                }
+            }
+        } else {
+            for (Loot loot : loots) {
+                if (!loot.isLooted()) {
+                    loot.draw(g);
+                    loot.setVisible(true);
+                }
+            }
         }
     }
 
     private void drawTraps(Graphics g) {
-        if (setting.getDifficulty() == GameConstants.MEDIUM || setting.getDifficulty() == GameConstants.HARD) { // show temporarily
-            for (Trap trap : traps) {
-                if (trap.isVisible())
-                    trap.draw(g);
+        if (!isEnded) {
+            if (setting.getDifficulty() == GameConstants.MEDIUM || setting.getDifficulty() == GameConstants.HARD) { // show temporarily
+                for (Trap trap : traps) { // todo player trap array
+                    if (trap.isVisible()) {
+                        trap.draw(g);
+                        trap.setVisible(false);
+                    }
+                }
+            } else if (setting.getDifficulty() == GameConstants.EASY) { // show permanently
+                Player player = players[turn];
+                for (int i = 0; i < setting.getNumberOfTraps(); ++i) {
+                    if (player.locatedTraps[i]) {
+                        traps[i].draw(g);
+                        traps[i].setVisible(true);
+                    } else {
+                        traps[i].setVisible(false);
+                    }
+
+                }
             }
-        } else if (setting.getDifficulty() == GameConstants.EASY) { // show permanently
-            Player player = players[turn];
-            for (int i = 0; i < setting.getNumberOfTraps(); ++i) {
-                if (player.locatedTraps[i])
-                    traps[i].draw(g);
+        } else {
+            for (Trap trap : traps) {
+                trap.draw(g);
+                trap.setVisible(true);
             }
         }
     }
@@ -612,21 +653,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     void checkHouse() { // applies appropriate behavior
-        Player curPlayer = players[turn];
 
-        for (int i = turn, j = 0; j < setting.getNumberOfPlayers() - 1; ++i, ++j) { // first check for fight
-            int nxtTurn = (i + 1) % setting.getNumberOfPlayers();
-            if (curPlayer._x == players[nxtTurn]._x && curPlayer._y == players[nxtTurn]._y) {
-                boolean result = applyFight(players[nxtTurn]); // fight
-                scoreboardPanel.updateState();
-                if (!result) { // if lost don't check houses for him
-                    return;
-                }
-            }
+//        if (checkFight()) { // first check for fight
+//            return; // if lost don't check houses
+//        }
+        byte fightResult = checkFight();
+        if (fightResult == -1) { // prevent index out of bounds bug
+            return;
         }
 
+        Player curPlayer = players[turn];
         switch (boardPanel.board[curPlayer._x][curPlayer._y]) { // then for houses
-            case GameConstants.LOOT: // todo reduce time of searching with resetting house to 0
+            case GameConstants.LOOT:
                 applyLoot();
                 break;
             case GameConstants.TRAP:
@@ -635,16 +673,45 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             case GameConstants.QUEST: // just the quest
                 applyTreasure();
                 break;
-//                todo empty massage
             case GameConstants.CASTLE:
                 applyCastle();
                 break;
             case GameConstants.MARKET:
                 applyMarket();
                 break;
+            default:
+                if (fightResult == 0) { // if fight didn't occur
+                    JOptionPane.showConfirmDialog(frame, "Next player...", "",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+                }
         }
 
 
+    }
+
+    private byte checkFight() {
+        Player curPlayer = players[turn];
+        for (int i = turn, j = 0; j < setting.getNumberOfPlayers() - 1; ++i, ++j) { // first check for fight
+            int nxtTurn = (i + 1) % setting.getNumberOfPlayers();
+
+            if (curPlayer._x == players[nxtTurn]._x && curPlayer._y == players[nxtTurn]._y) {
+                boolean result = applyFight(players[nxtTurn]); // fight
+                scoreboardPanel.updateState();
+                statePanel.update(players[nxtTurn]);
+
+                if (!result) { // if defeated
+                    JOptionPane.showMessageDialog(frame, String.format("\"%s\" beat you!", players[nxtTurn].getTitle()),
+                            "Fight", JOptionPane.ERROR_MESSAGE);
+                    return -1;
+                } else {
+                    JOptionPane.showMessageDialog(frame, String.format("You beat \"%s\"!", players[nxtTurn].getTitle()),
+                            "Fight", JOptionPane.INFORMATION_MESSAGE);
+                    return 1;
+                }
+
+            }
+        }
+        return 0;
     }
 
     boolean applyFight(Player opponent) {
@@ -663,7 +730,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             System.out.println("main.GamePanel.applyTreasure");
             player.locatedTreasures[treasure.getId()] = true;
 
-            sidePanel.update(treasure);
+            statePanel.update(treasure);
             repaint();
 
             JOptionPane.showMessageDialog(this,
@@ -684,7 +751,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             player.applyTrap(trap);
             player.locatedTraps[trap.getId()] = true;
             scoreboardPanel.updateState();
-            sidePanel.update(trap);
+            statePanel.update(trap);
 
             repaint();
 
@@ -704,7 +771,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         System.out.println("main.GamePanel.applyCastle");
         Player player = players[turn];
         int questID = Quest.getInstance().getTreasure().getId();
-        sidePanel.update(castle);
+        statePanel.update(castle);
 
         if (player.locatedTreasures[questID]) { // if player has treasure address
             Treasure treasure = treasures[questID];
@@ -739,7 +806,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             System.err.println("GamePanel.applyMarket");
         }
 
-        sidePanel.update(markets[0]);
+        statePanel.update(markets[0]);
         new ShoppingDialog(frame, treasure, players[turn], scoreboardPanel); // todo casting is ok?
 
         System.out.println();
@@ -757,7 +824,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 player.applyLoot(loot);
                 boardPanel.board[player._x][player._y] = GameConstants.EMPTY; // free the house
                 scoreboardPanel.updateState();
-                sidePanel.update(loot);
+                statePanel.update(loot);
 
                 repaint();
 
@@ -782,27 +849,44 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     void nextPlayer() { // called after complete moves or wrong moves
-        /* make things ready for next player.*/
-//        players[turn].toggleTurn(); // set off previous // todo necessary?
+        /*freeze the screen,
+         *make things ready for next player.*/
+        repaint();
+        freeze(2000);
+
         players[turn].setTurn(false);
         System.out.println("player1 name = " + players[turn].getTitle());
         System.out.println("player1 turn = " + players[turn].isTurn());
         do {
             turn = (turn + 1) % setting.getNumberOfPlayers();
         } while (!players[turn].isPlaying());
-//        if (!players[turn].isPlaying()) // jump loser turn
-//            nextPlayer();
-//        players[turn].toggleTurn(); // set on current
         players[turn].setTurn(true);
         System.out.println("player2 name = " + players[turn].getTitle());
         System.out.println("player2 turn = " + players[turn].isTurn());
 
-        sidePanel.update();
+        statePanel.update();
         diceNumber = 0;
         nTrace = 0;
         dicePanel.getButton().setEnabled(true);
         System.out.println("players = " + players[turn]);
         System.out.println();
+
+    }
+
+    private void freeze(int delay) {
+//        long startTime = System.currentTimeMillis();
+//        while (System.currentTimeMillis() - startTime < delay) {
+//            repaint();
+//        }
+
+//        java.util.Timer timer = new Timer();
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                timer.cancel();
+//            }
+//        }, delay);
+
 
     }
 

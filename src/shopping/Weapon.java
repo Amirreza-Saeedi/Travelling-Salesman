@@ -1,4 +1,4 @@
-package element;
+package shopping;
 
 import java.awt.*;
 

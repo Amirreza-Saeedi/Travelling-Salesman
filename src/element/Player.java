@@ -3,10 +3,8 @@ package element;
 import java.awt.*;
 
 import consts.GameConstants;
-import main.*;
 import menu.Setting;
-
-import javax.swing.*;
+import shopping.Weapon;
 
 
 public class Player extends Element { // todo extend or not?
@@ -219,8 +217,8 @@ public class Player extends Element { // todo extend or not?
     public void buyWeapon(Weapon weapon) {
         System.out.println("Player.applyWeapon");
         System.out.println(weapon);
-        loseCoin(weapon.price);
-        gainPower(weapon.power);
+        loseCoin(weapon.getPrice());
+        gainPower(weapon.getPower());
     }
 
     public void buyTreasureMap(Treasure treasure, int price) {

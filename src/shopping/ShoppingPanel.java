@@ -1,5 +1,7 @@
-package element;
+package shopping;
 
+import element.Player;
+import element.Treasure;
 import menu.Theme;
 import main.ScoreboardPanel;
 

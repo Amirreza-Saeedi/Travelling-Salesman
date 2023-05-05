@@ -126,7 +126,7 @@ public class StatePanel extends JPanel {
     }
 
     public void update() { // called while moving and at next turn
-        stateColor = BoardMap.BOARD_COLOR;
+        stateColor = Board.BOARD_COLOR;
         stateClass.detailsLabel.setText("- No event");
 
         repaint();

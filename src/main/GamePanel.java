@@ -3,6 +3,7 @@ package main;
 import consts.GameConstants;
 import element.*;
 import menu.*;
+import shopping.ShoppingDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,16 +24,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private static final int FRAME_HEIGHT = (int) (FRAME_WIDTH * FRAME_RATIO);
     public final Dimension SCREEN_SIZE = new Dimension(FRAME_WIDTH, FRAME_HEIGHT);
     private static final double RATIO_OF_MAP_TO_FRAME = 3.0 / 5;
-    private static final int MAP_WIDTH = (int) (FRAME_WIDTH * RATIO_OF_MAP_TO_FRAME);
-    private static final int MAP_HEIGHT = FRAME_HEIGHT;
-    public final Dimension MAP_SIZE = new Dimension(MAP_WIDTH, MAP_HEIGHT);
+    private static final int BOARD_WIDTH = (int) (FRAME_WIDTH * RATIO_OF_MAP_TO_FRAME);
+    private static final int BOARD_HEIGHT = FRAME_HEIGHT;
+//    public final Dimension BOARD_SIZE = new Dimension(BOARD_WIDTH, BOARD_HEIGHT);
     public final int UNIT_SIZE;
 
 
     //    JPanel mapPanel; // TODO convert mapRect to panel?
     ScoreboardPanel scoreboardPanel;
     StatePanel sidePanel;
-    BoardMap boardPanel;
+    Board boardPanel;
 
     private final Random random = new Random();
     private Castle castle;
@@ -71,6 +72,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // create main panel
         super();
         this.setPreferredSize(SCREEN_SIZE);
+        this.setSize(SCREEN_SIZE);
         this.setBackground(Color.black);
         this.setLayout(null);
         this.addKeyListener(this);
@@ -101,8 +103,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
     public void newBoard() { // panel at center
-        int deltaWidth = FRAME_WIDTH - MAP_WIDTH;
-        boardPanel = new BoardMap(deltaWidth / 2, 0, MAP_WIDTH, MAP_HEIGHT, setting.getBoardSize());
+        int deltaWidth = FRAME_WIDTH - BOARD_WIDTH;
+        boardPanel = new Board(new Rectangle(deltaWidth / 2, 0, BOARD_WIDTH, BOARD_HEIGHT),
+                new Dimension(getWidth(), getHeight()));
+//        boardPanel = new Board(new Rectangle(getX(), getY(), getWidth(), getHeight()));
     }
 
 

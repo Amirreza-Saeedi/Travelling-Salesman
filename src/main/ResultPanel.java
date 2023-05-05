@@ -3,6 +3,7 @@ package main;
 import consts.GameConstants;
 import element.Player;
 import menu.MenuFrame;
+import menu.Setting;
 import menu.Theme;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class ResultPanel extends JPanel implements ActionListener {
         JLabel nameLabel = new JLabel("Name");
         JLabel stateLabel = new JLabel("status: ");
         JLabel pointsLabel = new JLabel("points: ");
-        JLabel[] treasuresLabels = new JLabel[8]; // todo 4?
+        JLabel[] treasuresLabels = new JLabel[Setting.getInstance().getNumberOfTreasures()];
         Player player;
 
     }
@@ -43,6 +44,10 @@ public class ResultPanel extends JPanel implements ActionListener {
         this.parent = parent;
 
         playerObjs = new PlayerClass[players.length];
+        for (int i = 0; i < playerObjs.length; i++) {
+            playerObjs[i] = new PlayerClass();
+            playerObjs[i].player = players[i];
+        }
         setArrangement(players);
 
         // leaderboard
@@ -63,7 +68,7 @@ public class ResultPanel extends JPanel implements ActionListener {
         treasuresLabel.setBounds(getWidth() / 3, leaderboardLabel.getY() + 20, 200, 20);
         treasuresLabel.setFont(new Font("", Font.PLAIN, treasuresLabel.getHeight() - 3));
         treasuresLabel.setForeground(Theme.DARK_THEME.foreColor);
-        treasuresLabel.setText("Treasures " + getNLootedTreasures(players) + "/" + GamePanel.NUMBER_OF_TREASURES);
+        treasuresLabel.setText("Treasures " + getNLootedTreasures(players) + "/" + Setting.getInstance().getNumberOfTreasures());
         add(treasuresLabel);
 
         // buttons
@@ -76,11 +81,12 @@ public class ResultPanel extends JPanel implements ActionListener {
         int d = (getHeight() - y0) / players.length;
         Dimension size = new Dimension(getWidth() / 2, 25);
 
-        for (int i = 0; i < players.length; i++) {
+        for (int i = 0; i < playerObjs.length; i++) {
             // name label
-            PlayerClass pc = playerObjs[i] = new PlayerClass();
-            Player player = pc.player = players[i];
-            pc.nameLabel.setText(i + 1 + "- " + player.getTitle());
+//            PlayerClass pc = playerObjs[i] = new PlayerClass();
+            PlayerClass pc = playerObjs[i];
+//            Player player = pc.player = players[i];
+            pc.nameLabel.setText(i + 1 + "- " + pc.player.getTitle());
             pc.nameLabel.setSize(size);
             pc.nameLabel.setLocation(20, i * d + y0);
             pc.nameLabel.setFont(new Font("ink free", Font.BOLD, pc.nameLabel.getHeight()));
@@ -112,7 +118,7 @@ public class ResultPanel extends JPanel implements ActionListener {
             // points
             pc.pointsLabel.setBounds(pc.stateLabel.getX() + pc.stateLabel.getWidth(), pc.nameLabel.getY(),
                     getWidth(), size.height);
-            pc.pointsLabel.setText("Points: " + player.getPoints());
+            pc.pointsLabel.setText("Points: " + pc.player.getPoints());
             pc.pointsLabel.setOpaque(true);
             pc.pointsLabel.setFont(new Font("", Font.BOLD, pc.pointsLabel.getHeight() - 5));
             pc.pointsLabel.setForeground(Theme.DARK_THEME.foreColor);
@@ -125,9 +131,9 @@ public class ResultPanel extends JPanel implements ActionListener {
             for (int j = 0; j < pc.treasuresLabels.length; j++) {
                 JLabel label = pc.treasuresLabels[j] = new JLabel();
                 label.setText("- " +
-                        (player.getTreasures(j) != null ? player.getTreasures(j).getTitle() : ""));
+                        (pc.player.getTreasures(j) != null ? pc.player.getTreasures(j).getTitle() : ""));
                 label.setBounds(20 + (j % 4) * width, y1, width, 20);
-                label.setFont(new Font("", Font.PLAIN, label.getHeight()));
+                label.setFont(new Font("", Font.PLAIN, label.getHeight() - 2));
                 label.setForeground(Theme.DARK_THEME.foreColor);
                 add(label);
                 if (j % 4 == 3) {
@@ -172,12 +178,12 @@ public class ResultPanel extends JPanel implements ActionListener {
     }
 
     private void setArrangement(Player[] players) {
-        for (int i = 0; i < players.length - 1; i++) {
-            for (int j = i + 1; j < players.length; j++) {
-                if (players[j].getPoints() > players[i].getPoints()) {
-                    Player temp = players[i];
-                    players[i] = players[j];
-                    players[j] = temp;
+        for (int i = 0; i < playerObjs.length - 1; i++) {
+            for (int j = i + 1; j < playerObjs.length; j++) {
+                if (playerObjs[j].player.getPoints() > playerObjs[i].player.getPoints()) {
+                    PlayerClass temp = playerObjs[i];
+                    playerObjs[i] = playerObjs[j];
+                    playerObjs[j] = temp;
                 }
             }
         }

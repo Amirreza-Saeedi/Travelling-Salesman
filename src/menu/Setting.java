@@ -1,7 +1,5 @@
 package menu;
 
-import java.awt.*;
-
 public class Setting {
 
     // difficulty
@@ -19,8 +17,45 @@ public class Setting {
     private int boardSize = 10;
     final static int MIN_SIZE = 6;
     final static int MAX_SIZE = 12;
+
+    // elements (amounts, units ...)
+    private static final double RATIO_OF_MARKETS_TO_UNITS = 5.0 / (10 * 10);
+    private static final double RATIO_OF_LOOTS_TO_UNITS = 13.0 / (10 * 10);
+    private static final double RATIO_OF_WALLS_TO_UNITS = 5.0 / (10 * 10);
+    private static final double RATIO_OF_TRAPS_TO_UNITS = 5.0 / (10 * 10);
+    private final int NUMBER_OF_TREASURES = 1;
+    private final int NUMBER_OF_CASTLES = 1;
+
     private final static Setting instance = new Setting();
     private Setting() {
+    }
+
+    public int getNumberOfUnits() {
+        return boardSize * boardSize;
+    }
+
+    public int getNumberOfTreasures() {
+        return NUMBER_OF_TREASURES;
+    }
+
+    public int getNumberOfMarkets() {
+        return (int) (RATIO_OF_MARKETS_TO_UNITS * getNumberOfUnits());
+    }
+
+    public int getNumberOfLoots() {
+        return (int) (RATIO_OF_LOOTS_TO_UNITS * getNumberOfUnits());
+    }
+
+    public int getNumberOfCastles() {
+        return NUMBER_OF_CASTLES;
+    }
+
+    public int getNumberOfTraps() {
+        return (int) (RATIO_OF_TRAPS_TO_UNITS * getNumberOfUnits());
+    }
+
+    public int getNumberOfWalls() {
+        return (int) (RATIO_OF_WALLS_TO_UNITS * getNumberOfUnits());
     }
 
     public static Setting getInstance() {

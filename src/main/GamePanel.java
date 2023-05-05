@@ -28,22 +28,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public final Dimension MAP_SIZE = new Dimension(MAP_WIDTH, MAP_HEIGHT);
     public final int UNIT_SIZE;
 
-    // elements (amounts, units ...)
-    private static final int NUMBER_OF_UNITS = Setting.getInstance().getBoardSize() * Setting.getInstance().getBoardSize();
-    private static final double RATIO_OF_MARKETS_TO_UNITS = 5.0 / (10 * 10);
-    public static final int NUMBER_OF_MARKETS = (int) (NUMBER_OF_UNITS * RATIO_OF_MARKETS_TO_UNITS);
-    private static final double RATIO_OF_LOOTS_TO_UNITS = 13.0 / (10 * 10);
-    public static final int NUMBER_OF_LOOTS = (int) (NUMBER_OF_UNITS * RATIO_OF_LOOTS_TO_UNITS);
-    public static final int NUMBER_OF_TREASURES = 8; // TODO expand treasures
-    public static final int NUMBER_OF_CASTLES = 1; // TODO add other modes
-    private static final double RATIO_OF_WALLS_TO_UNITS = 5.0 / (10 * 10);
-    public static final int NUMBER_OF_WALLS = (int) (NUMBER_OF_UNITS * RATIO_OF_WALLS_TO_UNITS);
-    private static final double RATIO_OF_TRAPS_TO_UNITS = 5.0 / (10 * 10); // TODO add difficulty condition
-    public static final int NUMBER_OF_TRAPS = (int) (NUMBER_OF_UNITS * RATIO_OF_TRAPS_TO_UNITS);
-
-
-    // TODO difficulty
-//    public static int difficulty;
 
     //    JPanel mapPanel; // TODO convert mapRect to panel?
     ScoreboardPanel scoreboardPanel;
@@ -197,7 +181,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private void drawPlayers(Graphics g) {
         for (Player player : players) {
-            player.draw(g);
+            if (player.isPlaying()) {
+                player.draw(g);
+            }
         }
     }
 
@@ -245,7 +231,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         } else if (setting.getDifficulty() == GameConstants.EASY) { // show permanently
             Player player = players[turn];
-            for (int i = 0; i < NUMBER_OF_TRAPS; ++i) {
+            for (int i = 0; i < setting.getNumberOfTraps(); ++i) {
                 if (player.locatedTraps[i])
                     traps[i].draw(g);
             }
@@ -299,7 +285,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void newTreasures() { // put the treasures in random positions TODO improve algorithm
-        treasures = new Treasure[NUMBER_OF_TREASURES];
+        treasures = new Treasure[setting.getNumberOfTreasures()];
         int j = random.nextInt(4); // determine which area to start
         Point point = new Point();
 
@@ -317,7 +303,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void newMarkets() { // put markets in random positions TODO optimize the algorithm
-        markets = new Market[NUMBER_OF_MARKETS];
+        markets = new Market[setting.getNumberOfMarkets()];
         int j = random.nextInt(4); // determine which area to start
         Point point = new Point();
 
@@ -334,7 +320,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void newLoots() {
-        loots = new Loot[NUMBER_OF_LOOTS];
+        loots = new Loot[setting.getNumberOfLoots()];
         int     x = 0,
                 y = 0;
 
@@ -355,7 +341,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void newTraps() {
-        traps = new Trap[NUMBER_OF_TRAPS];
+        traps = new Trap[setting.getNumberOfTraps()];
         int x = 0,
                 y = 0;
 
@@ -377,7 +363,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void newWalls() {
-        walls = new Wall[NUMBER_OF_WALLS];
+        walls = new Wall[setting.getNumberOfWalls()];
         int     x = 0,
                 y = 0;
 
@@ -469,7 +455,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void shuffleQuests() { // shuffles array
-        questList = new int[NUMBER_OF_TREASURES];
+        questList = new int[setting.getNumberOfTreasures()];
         for (int i = 0; i < questList.length; i++) { // init
             questList[i] = i;
         }
@@ -793,7 +779,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     void nextPlayer() { // called after complete moves or wrong moves
         /* make things ready for next player.*/
-        players[turn].toggleTurn(); // set off previous // todo necessary?
+//        players[turn].toggleTurn(); // set off previous // todo necessary?
+        players[turn].setTurn(false);
         System.out.println("player1 name = " + players[turn].getTitle());
         System.out.println("player1 turn = " + players[turn].isTurn());
         do {
@@ -801,7 +788,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         } while (!players[turn].isPlaying());
 //        if (!players[turn].isPlaying()) // jump loser turn
 //            nextPlayer();
-        players[turn].toggleTurn(); // set on current
+//        players[turn].toggleTurn(); // set on current
+        players[turn].setTurn(true);
         System.out.println("player2 name = " + players[turn].getTitle());
         System.out.println("player2 turn = " + players[turn].isTurn());
 
@@ -817,29 +805,24 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     void checkGameStatus() { // called by apply treasure
         /* declare whether a player has won, lost, drawn
         * or should continue*/
-        System.out.println("GamePanel.checkGameStatus");
-        final int maxTreasures = getMaxTreasures();
-        System.out.println("maxTreasures = " + maxTreasures);
-        final int nRemainingTreasures = getNRemainingTreasures();
-        System.out.println("nRemainingTreasures = " + nRemainingTreasures);
 
-        // set losers
-        System.out.println("looser loop:");
-        for (Player player : players) {
-            if (player.getNumberOfTreasures() + nRemainingTreasures < maxTreasures) {
-                player.setState(GameConstants.LOST);
-                JOptionPane.showMessageDialog(this, "Player '" + player.getTitle() + "'lost!",
-                        "", JOptionPane.ERROR_MESSAGE);
-                // todo press 't'
-
-                new ResultDialog(frame, players);
+        { // first set losers
+            final int maxTreasures = getMaxTreasures();
+            final int nRemainingTreasures = getNRemainingTreasures();
+            // set losers
+            System.out.println("looser loop:");
+            for (Player player : players) {
+                if (player.getNumberOfTreasures() + nRemainingTreasures < maxTreasures && player.isPlaying()) {
+                    player.setState(GameConstants.LOST);
+                    JOptionPane.showMessageDialog(this, "Player '" + player.getTitle() + "'lost!",
+                            "", JOptionPane.ERROR_MESSAGE);
+                    player.revive();
+                    repaint();
+                }
             }
-            System.out.println("player.getTitle() = " + player.getTitle());
-            System.out.println("player.getState() = " + player.getState());
         }
 
-        // set winner
-        if (getNAlivePlayers() == 1) {
+        if (getNAlivePlayers() == 1) { // set winner based on loser
             System.out.println("winner loop:");
             for (Player player : players) {
                 if (player.isPlaying()) {
@@ -847,27 +830,37 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     JOptionPane.showMessageDialog(this, "Player '" + player.getTitle() + "' won!",
                             "", JOptionPane.PLAIN_MESSAGE);
 
-                    new ResultDialog(frame, players);
+                    endGame();
+                    break;
                 }
-                System.out.println("player.getTitle() = " + player.getTitle());
-                System.out.println("player.getState() = " + player.getState());
             }
             isEnded = true;
-        }
 
-        // set tie
-        if (nRemainingTreasures == 0 && getNAlivePlayers() != 1) {
+        } else if (getNRemainingTreasures() == 0 && getNAlivePlayers() != 1) { // draw
             System.out.println("drawer loop");
             for (Player player : players) {
                 if (player.isPlaying()) {
                     player.setState(GameConstants.DRAWN);
                 }
-                System.out.println("player.getTitle() = " + player.getTitle());
-                System.out.println("player.getState() = " + player.getState());
             }
             isEnded = true;
             JOptionPane.showMessageDialog(this, "Draw!");
+            endGame();
+
         }
+
+    }
+
+    private void endGame() {
+        /*remove dice and moves buttons' action listeners,
+        * show the result,
+        * stop timer*/
+        for (JButton b : movePanel.getButtons()) {
+            b.removeActionListener(this);
+        }
+        dicePanel.getButton().removeActionListener(this);
+        scoreboardPanel.getTimer().stop();
+        new ResultDialog(frame, players);
     }
 
     private int getNRemainingTreasures() { // todo or loop through array
@@ -924,10 +917,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     Treasure pickRandomTreasure() {
-        int i = random.nextInt(NUMBER_OF_TREASURES);
+        int i = random.nextInt(setting.getNumberOfTreasures());
         Player player = players[turn];
-        for (int j = 0; j < NUMBER_OF_TREASURES; j++) {
-            int index = i % NUMBER_OF_TREASURES;
+        for (int j = 0; j < setting.getNumberOfTreasures(); j++) {
+            int index = i % setting.getNumberOfTreasures();
             if (!treasures[index].isLooted() && !player.locatedTreasures[index]) {
                 return treasures[index];
             } else i++;

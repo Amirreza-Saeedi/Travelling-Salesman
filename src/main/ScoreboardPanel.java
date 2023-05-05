@@ -233,4 +233,7 @@ public class ScoreboardPanel extends JPanel {
         }
     }
 
+    public Timer getTimer() {
+        return timer;
+    }
 }

@@ -4,6 +4,7 @@ import java.awt.*;
 
 import consts.GameConstants;
 import main.*;
+import menu.Setting;
 
 import javax.swing.*;
 
@@ -14,7 +15,7 @@ public class Player extends Element { // todo extend or not?
     public boolean[] lootedTreasures; // determine looted treasures
     public boolean[] locatedTreasures; // determine located treasures
     public boolean[] locatedTraps; // determine located traps
-    private Treasure[] treasures = new Treasure[GamePanel.NUMBER_OF_TREASURES];
+    private Treasure[] treasures = new Treasure[Setting.getInstance().getNumberOfTreasures()];
     private int power;
     private int coin;
     private int numberOfTreasures;
@@ -39,9 +40,9 @@ public class Player extends Element { // todo extend or not?
 
         this.power = INITIAL_POWER;
         this.coin = INITIAL_CASH;
-        this.lootedTreasures = new boolean[GamePanel.NUMBER_OF_TREASURES];
-        this.locatedTreasures = new boolean[GamePanel.NUMBER_OF_TREASURES];
-        this.locatedTraps = new boolean[GamePanel.NUMBER_OF_TRAPS];
+        this.lootedTreasures = new boolean[Setting.getInstance().getNumberOfTreasures()];
+        this.locatedTreasures = new boolean[Setting.getInstance().getNumberOfTreasures()];
+        this.locatedTraps = new boolean[Setting.getInstance().getNumberOfTraps()];
 
         setVisible(true);
     }
@@ -104,11 +105,15 @@ public class Player extends Element { // todo extend or not?
         return result;
     }
 
-    public void revive(Player player) { // take player to start house
+    private void revive(Player player) { // take player to start house
         player.x = startHouse.x;
         player.y = startHouse.y;
         player._x = startHouse._x;
         player._y = startHouse._y;
+    }
+
+    public void revive() {
+        revive(this);
     }
     
     public void gainCoin(int amount) {

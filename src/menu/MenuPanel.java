@@ -60,6 +60,8 @@ public class MenuPanel extends JPanel implements ActionListener {
             buttons[i].addActionListener(this);
             buttons[i].setFont(buttonFont);
             buttons[i].setBorder(new EtchedBorder());
+            buttons[i].setBackground(Theme.DARK_THEME.backColor);
+            buttons[i].setForeground(Theme.DARK_THEME.foreColor);
             add(buttons[i]);
         }
 

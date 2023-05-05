@@ -13,10 +13,9 @@ public class SettingPanel extends JPanel implements ActionListener, ChangeListen
     private static final Color backColor = new Color(0x424242);
     private static final Color foreColor = new Color(0xF1F1F1);
     private JDialog parentDialog;
-    JButton applyButton = new JButton("Apply");
-    JButton closeButton = new JButton("Close");
-    JButton resetButton = new JButton("Reset");
-    JButton[] buttons = {closeButton, applyButton, resetButton};
+    private final JButton applyButton = new JButton("Apply");
+    private final JButton closeButton = new JButton("Close");
+    private final JButton resetButton = new JButton("Reset");
 
     // modes
     JLabel modeLabel = new JLabel("Playing Mode:");
@@ -77,6 +76,7 @@ public class SettingPanel extends JPanel implements ActionListener, ChangeListen
                 Setting.MIN_SIZE, Setting.MAX_SIZE, 1));
         add(boardSizeSpinner);
 
+        JButton[] buttons = {closeButton, applyButton, resetButton};
         setButtons(buttons);
         applyButton.setEnabled(false); // set enabled when any action performed
     }
@@ -121,13 +121,13 @@ public class SettingPanel extends JPanel implements ActionListener, ChangeListen
         Dimension buttonDimension = new Dimension(100, 30);
         int hSpace = 10 + buttonDimension.width;
         int y0 = getHeight() - (buttonDimension.height + 10);
-//        int x0 = getXCenter() - buttonDimension.width - hSpace / 2;
         int x0 = 20;
 
         for (int i = 0; i < buttons.length; ++i) {
             buttons[i].setSize(buttonDimension);
             buttons[i].setLocation(x0 + i * hSpace, y0);
             buttons[i].addActionListener(this);
+            buttons[i].setBackground(Theme.BRIGHT_THEME.backColor);
             add(buttons[i]);
         }
     }
